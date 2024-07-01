@@ -7,16 +7,17 @@ import AppStackNavigator from './app-stack-navigator'
 import useUserGlobalStore from '../store/useUserGlobalStore'
 
 const Navigation = () => {
-    const {user,updateUser} = useUserGlobalStore()
+    //const {user,updateUser} = useUserGlobalStore()
 
-  console.log('user', JSON.stringify(user, null, 1) );
+    const { user } = useUserGlobalStore()
+  // console.log('user', JSON.stringify(user, null, 1) );
   
-  useEffect(() => {
-    updateUser({
-      email: 'hoangbinhtdmu@gmail.com',
-      name: 'Hoang Binh',
-    })
-  }, [])
+  // useEffect(() => {
+  //   updateUser({
+  //     email: 'hoangbinhtdmu@gmail.com',
+  //     name: 'Hoang Binh',
+  //   })
+  // }, [])
 
   return (
    <NavigationContainer>

@@ -4,9 +4,15 @@ import { Box,Text } from '../../utils/theme'
 import { useNavigation } from '@react-navigation/native'
 import { AuthScreenNavigationType } from '../../navigation/types'
 import SafeAreaWrapper from '../../components/shared/safe-area-wrapper'
+import useSWR from 'swr'
+import { fetcher } from '../../services/config'
 
 
 const HomeScreen = () => {
+
+  const {data ,isLoading} = useSWR('',fetcher)
+  console.log(`data`,JSON.stringify(data,null,2));
+  
 
   return (
     <SafeAreaWrapper>

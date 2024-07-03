@@ -1,51 +1,60 @@
-import { CompositeNavigationProp, NavigatorScreenParams } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs"
+import {
+  CompositeNavigationProp,
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from "@react-navigation/native"
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack"
+import { ICategory, ITask } from "../types"
 
 export type AuthStackParamList = {
-    Welcome: undefined;
-    SignIn: undefined;
-    SignUp: undefined;
+  Welcome: undefined
+  SignIn: undefined
+  SignUp: undefined
 }
 
 export type RootBottomTabParamList = {
-    HomeStack: NavigatorScreenParams<HomeStackParamList>;
-    Today: undefined;
-    Completed: undefined;
-    CategoriesStack: NavigatorScreenParams<CategoriesStackParamList>;
+  HomeStack: NavigatorScreenParams<HomeStackParamList>
+  Today: undefined
+  Completed: undefined
+  CategoriesStack: NavigatorScreenParams<CategoriesStackParamList>
 }
 
 export type HomeStackParamList = {
-    Home: undefined;
-    EditTask: undefined;
+  Home: undefined
+  EditTask: {
+    task: ITask
+  }
 }
 
 export type CategoriesStackParamList = {
-    Categories: undefined;
-    Category: {
-        id: string;
-    };
-    CreateCategory: {
-        id: string;
-    };
+  Categories: undefined
+  Category: {
+    id: string
+  }
+  CreateCategory: {
+    category?: ICategory
+  }
 }
 
-
 export type AppStackParamList = {
-    Root: NavigatorScreenParams<RootBottomTabParamList>;
-    Settings: undefined;
-
+  Root: NavigatorScreenParams<RootBottomTabParamList>
+  Settings: undefined
 }
 
 export type RootStackParamList = {
-    AuthStack: NavigatorScreenParams<AuthStackParamList>;
-    AppStack: NavigatorScreenParams<AppStackParamList>;
+  AppStack: NavigatorScreenParams<AppStackParamList>
+  AuthStack: NavigatorScreenParams<AuthStackParamList>
 }
 
 declare global {
-    namespace ReactNavigation {
-        interface RootParamList extends RootStackParamList { }
-    }
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
 }
 
 export type AuthScreenNavigationType<
@@ -54,3 +63,15 @@ export type AuthScreenNavigationType<
   NativeStackNavigationProp<AuthStackParamList, RouteName>,
   NativeStackNavigationProp<AppStackParamList, "Root">
 >
+
+export type RootTabScreenProps<Screen extends keyof RootBottomTabParamList> =
+  CompositeScreenProps<
+    BottomTabScreenProps<RootBottomTabParamList, Screen>,
+    NativeStackScreenProps<RootBottomTabParamList>
+  >
+
+export type CategoriesNavigationType =
+  NativeStackNavigationProp<CategoriesStackParamList>
+
+export type HomeScreenNavigationType =
+  NativeStackNavigationProp<HomeStackParamList>

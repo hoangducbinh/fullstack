@@ -6,11 +6,12 @@ import { AuthScreenNavigationType } from '../../navigation/types'
 import SafeAreaWrapper from '../../components/shared/safe-area-wrapper'
 import useSWR from 'swr'
 import { fetcher } from '../../services/config'
+import CreateNewList from '../../components/categories/create-new-list'
 
 
 const HomeScreen = () => {
 
-  const {data ,isLoading} = useSWR('',fetcher)
+  const {data ,isLoading} = useSWR('categories',fetcher)
   console.log(`data`,JSON.stringify(data,null,2));
   
 

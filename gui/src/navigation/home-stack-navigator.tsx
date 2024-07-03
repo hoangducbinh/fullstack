@@ -1,9 +1,6 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import { AuthStackParamList, HomeStackParamList } from './types'
-import WelcomeScreen from '../screens/welcome-screen'
-import SignInScreen from '../screens/sign-in-screen'
-import SignUpScreen from '../screens/sign-up-screen'
+import {HomeStackParamList } from './types'
 import HomeScreen from '../screens/home-screen'
 import EditTaskScreen from '../screens/edit-task'
 

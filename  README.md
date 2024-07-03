@@ -12,3 +12,6 @@ npx tsc --init
 
 npm run dev để chạy server
 
+///
+
+npm i @shopify/restyle

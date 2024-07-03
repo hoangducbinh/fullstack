@@ -3,7 +3,6 @@ import axios from "axios"
 
 export const BASE_URL = "http://localhost:4000/"
 //export const BASE_URL = "http://10.0.2.2:4000/"
-// export const BASE_URL = "https://production-blossom-app.onrender.com/"
 
 const TIME_OUT = 30000
 export const TOKEN_NAME = "user_token"

@@ -4,9 +4,6 @@ import userRouters from './routes/user.routes';
 import categoryRoutes from './routes/category.routes';
 import taskRoutes from './routes/task.routes';
 
-
-
-
 const application = express();
 
 application.use(express.json());

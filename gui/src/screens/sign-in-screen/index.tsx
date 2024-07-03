@@ -43,6 +43,8 @@ const SignInScreen = () => {
                 email: _user.email,
                 name: _user.name,
             })
+            console.log('user', JSON.stringify(_user, null, 1));
+            
         } catch (error) { }
     }
 

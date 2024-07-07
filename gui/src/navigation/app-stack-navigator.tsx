@@ -1,20 +1,22 @@
-import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
-import { AppStackParamList} from './types'
-import BottomTabNavigator from './bottom-tab-navigator'
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import React from "react"
 
-const Stack = createStackNavigator<AppStackParamList>()
+import { AppStackParamList } from "./types"
+import BottomTabNavigator from "./bottom-tab-navigator"
 
+const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStackNavigator = () => {
   return (
     <Stack.Navigator>
-        <Stack.Screen name='Root' component={BottomTabNavigator} 
+      <Stack.Screen
+        name="Root"
+        component={BottomTabNavigator}
         options={{
-            headerShown: false
+          headerShown: false,
         }}
-        />  
-    </Stack.Navigator> 
+      />
+    </Stack.Navigator>
   )
 }
 

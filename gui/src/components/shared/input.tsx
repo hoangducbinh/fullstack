@@ -1,6 +1,6 @@
-import theme, { Box, Text } from '../../utils/theme'
 import { FieldError } from "react-hook-form"
 import { StyleSheet, TextInput, TextInputProps } from "react-native"
+import theme, { Box, Text } from "../../utils/theme"
 
 type InputProps = {
   label: string
@@ -10,7 +10,7 @@ type InputProps = {
 const Input = ({ label, error, ...props }: InputProps) => {
   return (
     <Box flexDirection="column">
-      <Text variant="textXs" textTransform="capitalize" mb="3.5" >
+      <Text variant="textXs" textTransform="uppercase" mb="3.5">
         {label}
       </Text>
       <TextInput

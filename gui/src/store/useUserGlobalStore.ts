@@ -20,7 +20,7 @@ const useUserGlobalStore = create<IUserGlobalStore>()(
       },
     }),
     {
-      name: "intern-application-user-store",
+      name: "blossom-application-user-store",
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

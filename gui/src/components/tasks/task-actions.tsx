@@ -85,6 +85,11 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
     }
   }
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
+
+
   return (
     <Box>
       <Box
@@ -164,7 +169,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                   color: selectedCategory?.color.code,
                 }}
               >
-                {selectedCategory?.name || "Categories"}
+               {truncateText(selectedCategory?.name || "Categories", 8)}
               </Text>
             </Box>
           </Pressable>
@@ -207,7 +212,8 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                           newTask.categoryId === item._id ? "700" : "400"
                         }
                       >
-                        {item.name}
+                       
+                       {truncateText(item.name, 8)}
                       </Text>
                     </Box>
                   </Box>

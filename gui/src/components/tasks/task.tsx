@@ -71,7 +71,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
     }
   }
 
-  const navigateToEditTask = () => {
+ const navigateToEditTask = () => {
     navigation.navigate("EditTask", {
       task,
     })
@@ -92,12 +92,15 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
 
   return (
     <AnimatedBox entering={FadeInRight} exiting={FadeInLeft}>
-      <Pressable onPress={toggleTaskStatus} onLongPress={navigateToEditTask}>
+      <Pressable onPress={toggleTaskStatus}>
         <Box
           p="4"
           bg="lightGray"
           borderRadius="rounded-5xl"
           flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+
         >
           <Box flexDirection="row" alignItems="center">
             <AnimatedBox
@@ -124,7 +127,11 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
               {task.name}
             </Text>
           </Box>
-          <Box></Box>
+          <Box>
+          <Pressable onPress={navigateToEditTask}>
+              <Icon name="dots-three-vertical" size={16} />
+            </Pressable>
+          </Box>
         </Box>
       </Pressable>
     </AnimatedBox>

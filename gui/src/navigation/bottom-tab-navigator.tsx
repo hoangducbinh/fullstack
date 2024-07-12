@@ -7,6 +7,8 @@ import { RootBottomTabParamList } from "./types"
 import Icons from "../components/shared/icons"
 import CompletedScreen from "../screens/completed-screen"
 import TodayScreen from "../screens/today-screen"
+import Icon  from "react-native-vector-icons/MaterialCommunityIcons"
+import TaskCalendarScreen from "../screens/task-calendar"
 
 const Tab = createBottomTabNavigator<RootBottomTabParamList>()
 
@@ -34,7 +36,7 @@ const BottomTabNavigator = () => {
         component={CompletedScreen}
         options={() => ({
           title: "Completed",
-          tabBarIcon: ({ color }) => <Icons name="completed" color={color} />,
+          tabBarIcon: ({ color }) => <Icons name="calendars" color={color} />,
           headerShown: false,
         })}
       />
@@ -54,6 +56,15 @@ const BottomTabNavigator = () => {
         options={() => ({
           title: "Categories",
           tabBarIcon: ({ color }) => <Icons name="categories" color={color} />,
+          headerShown: false,
+        })}
+      />
+       <Tab.Screen
+        name="Settings"
+        component={TaskCalendarScreen}
+        options={() => ({
+          title: "Calendar",
+          tabBarIcon: ({ color }) => <Icons name="completed"  color={color} />,
           headerShown: false,
         })}
       />

@@ -43,8 +43,8 @@ const EditTaskScreen = () => {
 
   const navigation = useNavigation()
 
-  const { trigger } = useSWRMutation("tasks/edit", updateTaskRequest)
-  const { trigger: triggerDelete } = useSWRMutation("tasks/", deleteTaskRequest)
+  const { trigger } = useSWRMutation("tasks/editTask", updateTaskRequest)
+  const { trigger: triggerDelete } = useSWRMutation("tasks/delete", deleteTaskRequest)
 
   const { task } = route.params
 
@@ -93,6 +93,10 @@ const EditTaskScreen = () => {
   const selectedCategory = categories?.find(
     (_category) => _category._id === updatedTask.categoryId
   )
+
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
 
   return (
     <SafeAreaWrapper>
@@ -191,7 +195,8 @@ const EditTaskScreen = () => {
                     color: selectedCategory?.color.code,
                   }}
                 >
-                  {selectedCategory?.name}
+                  {truncateText(selectedCategory?.name || "Categories", 8)}
+                 
                 </Text>
               </Box>
             </Pressable>
@@ -241,7 +246,7 @@ const EditTaskScreen = () => {
                             updatedTask.categoryId === item._id ? "700" : "400"
                           }
                         >
-                          {item.name}
+                          {truncateText(item.name,8)}
                         </Text>
                       </Box>
                     </Box>

@@ -1,4 +1,5 @@
 
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { IUser } from "../types"
 import axiosInstance, { TOKEN_NAME, saveToken } from "./config"
 
@@ -39,3 +40,12 @@ export const loginUser = async ({ email, password }: LoginUserTypes) => {
     throw error
   }
 }
+
+export const removeToken = async () => {
+  try {
+    await AsyncStorage.removeItem(TOKEN_NAME);
+  } catch (error) {
+    console.error('Error removing token:', error);
+  }
+};
+

@@ -1,5 +1,5 @@
 import React from "react"
-import Svg, { Circle, Path } from "react-native-svg"
+import Svg, { Circle, Path, Rect } from "react-native-svg"
 
 type IconProps = {
   width?: number
@@ -7,7 +7,7 @@ type IconProps = {
   color?: string
 }
 
-type IconName = "home" | "completed" | "categories" | "calendar"
+type IconName = "home" | "completed" | "categories" | "calendar"| "calendars"
 
 const Home = ({ color = "black", height = 20, width = 20 }: IconProps) => (
   <Svg width={width} height={height} viewBox="0 0 19 20" fill="none">
@@ -67,6 +67,18 @@ const Categories = ({
     />
   </Svg>
 )
+const Calendars = ({ color = "black", height = 20, width = 20 }: IconProps) => (
+<Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M4 12L10 18L20 6"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+)
+
 
 const Icons = ({
   name,
@@ -83,6 +95,8 @@ const Icons = ({
       return <Categories color={color} height={height} width={width} />
     case "calendar":
       return <Calendar color={color} height={height} width={width} />
+    case "calendars":
+      return <Calendars color={color} height={height} width={width} />
   }
 }
 

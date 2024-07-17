@@ -2,6 +2,7 @@ export interface IUser {
     email: string
     name: string
     password: string
+    avatar: string
   }
   
   export interface IColor {
@@ -35,4 +36,5 @@ export interface IUser {
     date: string
     createdAt: string
     updatedAt: string
+    describe: string
   }

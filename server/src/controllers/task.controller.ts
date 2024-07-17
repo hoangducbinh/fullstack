@@ -24,12 +24,13 @@ const getAllTasks = async (request: AuthRequest, response: Response) => {
 
 const createTask = async (request: AuthRequest, response: Response) => {
     try {
-        const {name,date,categoryId}: ITask= request.body
+        const {name,date,categoryId,describe}: ITask= request.body
         const task = await Task.create(
             {
                 name,
                 date,
                 categoryId,
+                describe,
                 user: request.user
             }
         )

@@ -4,12 +4,14 @@ import bcrypt from "bcrypt";
 import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import { IUser } from "../types";
+import nodemailer from "nodemailer";
+
 
 
 
 const createUser = async (request: Request, response: Response) => {
     try {
-        const { name, email, password } = request.body;
+        const { name, email, password,avatar} = request.body;
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -19,11 +21,11 @@ const createUser = async (request: Request, response: Response) => {
         const user = await User.create({ 
             name, 
             email, 
+            avatar,
             password: hashedPassword });
             response.status(201).send({massage:"User created successfully"});
     } catch (error) {
        console.log("Error creating user", error);
-       
     }
 };
 const getUserToken = (_id: string|Types.ObjectId) => {
@@ -67,4 +69,112 @@ const loginUser = async (request: Request, response: Response) => {
 
 
 
-export { createUser,loginUser};
+const changePassword = async (request: Request, response: Response) => {
+    try {
+        const { email, oldPassword, newPassword } = request.body;
+
+        // Tìm người dùng dựa trên email
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            return response.status(404).send({ message: "User not found" });
+        }
+
+        // Kiểm tra tính hợp lệ của mật khẩu cũ
+        const isPasswordValid = await bcrypt.compare(oldPassword, existingUser.password);
+        if (!isPasswordValid) {
+            return response.status(400).send({ message: "Invalid old password" });
+        }
+
+        // Hash mật khẩu mới
+        const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+
+        // Cập nhật mật khẩu mới vào cơ sở dữ liệu
+        await User.updateOne({ _id: existingUser._id }, { password: hashedNewPassword });
+
+        response.status(200).send({ message: "Password updated successfully" });
+    } catch (error) {
+        console.error("Error changing password", error);
+        response.status(500).send({ message: "Error changing password" });
+    }
+};
+
+const updateProfile = async (request: Request, response: Response) => {
+    try {
+        const { email, newName, newAvatar } = request.body;
+
+        // Tìm người dùng dựa trên email
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            return response.status(404).send({ message: "User not found" });
+        }
+
+        // Cập nhật thông tin mới vào cơ sở dữ liệu
+        await User.updateOne({ _id: existingUser._id }, { name: newName, avatar: newAvatar });
+
+        response.status(200).send({ message: "Profile updated successfully" });
+    } catch (error) {
+        console.error("Error updating profile", error);
+        response.status(500).send({ message: "Error updating profile" });
+    }
+};
+
+
+const forgotPassword = async (request: Request, response: Response) => {
+    try {
+        const { email } = request.body;
+
+        // Tìm người dùng dựa trên email
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            return response.status(404).send({ message: "User not found" });
+        }
+
+        // Tạo mật khẩu ngẫu nhiên
+        const randomPassword = Math.random().toString(36).slice(-8); // Tạo mật khẩu 8 ký tự ngẫu nhiên
+
+        // Hash mật khẩu ngẫu nhiên
+        const hashedPassword = await bcrypt.hash(randomPassword, 12);
+
+        // Cập nhật mật khẩu mới vào cơ sở dữ liệu
+        await User.updateOne({ _id: existingUser._id }, { password: hashedPassword });
+
+        // Gửi email chứa mật khẩu ngẫu nhiên cho người dùng
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "hoangbinh02022002@gmail.com",
+                pass: "dvmb ehpm ceps fban", 
+            },
+        });
+
+        const mailOptions = {
+            from: "hoangbinh02022002@gmail.com",
+            to: email,
+            subject: "Đặt lại mật khẩu",
+            text: `Mật khẩu mới của bạn là: ${randomPassword}\n\n Vui lòng đăng nhập và đổi mật khẩu ngay sau khi đăng nhập`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log("Error sending email:", error);
+                response.status(500).send({ message: "Error sending email" });
+            } else {
+                console.log("Email sent:", info.response);
+                response.status(200).send({ message: "New password sent to your email" });
+            }
+        });
+
+    } catch (error) {
+        console.error("Error forgot password", error);
+        response.status(500).send({ message: "Error forgot password" });
+    }
+};
+
+
+
+
+
+export { createUser,loginUser,changePassword,updateProfile,forgotPassword};

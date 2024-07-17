@@ -42,6 +42,8 @@ const App = () => {
         </SWRConfig>
         <StatusBar
           translucent
+          backgroundColor="transparent"
+          barStyle="dark-content"
         />
       </SafeAreaProvider>
     </ThemeProvider>

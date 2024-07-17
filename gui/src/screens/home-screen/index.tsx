@@ -61,7 +61,8 @@ const HomeScreen = () => {
   if (isLoading || !tasks) {
     return <Loader />;
   }
-
+//https://tq6.mediacdn.vn/thumb_w/640/133514250583805952/2020/7/11/-1594456254224668535202.jpg
+//https://picsum.photos/200
   return (
     <SafeAreaWrapper>
       <Box flex={1} mx="4" mt="4">

@@ -1,9 +1,9 @@
-import { format } from "date-fns-tz";
 import React from "react";
-import { Alert, FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import { Alert, FlatList, Image, Pressable, StyleSheet } from "react-native";
 import { ZoomInEasyDown } from "react-native-reanimated";
-
 import useSWR from "swr";
+import { format } from "date-fns-tz";
+
 import { getGreeting } from "../../utils/helpers";
 import useUserGlobalStore from "../../store/useUserGlobalStore";
 import { ITask } from "../../types";
@@ -16,20 +16,18 @@ import Task from "../../components/tasks/task";
 import { removeToken } from "../../services/api";
 
 const today = new Date();
-const greeting = getGreeting({ hour: new Date().getHours() });
+const greeting = getGreeting({ hour: today.getHours() });
 
-const HomeScreen = () => {
+const HomeScreen: React.FC = () => {
   const { user } = useUserGlobalStore();
 
   const {
     data: tasks,
     isLoading,
     mutate: mutateTasks,
-  } = useSWR<ITask[]>("tasks/", fetcher,
-    {
-      refreshInterval: 1000,
-    }
-  );
+  } = useSWR<ITask[]>("tasks/", fetcher, {
+    refreshInterval: 1000,
+  });
 
   const logout = async () => {
     const { updateUser } = useUserGlobalStore.getState();
@@ -61,8 +59,29 @@ const HomeScreen = () => {
   if (isLoading || !tasks) {
     return <Loader />;
   }
-//https://tq6.mediacdn.vn/thumb_w/640/133514250583805952/2020/7/11/-1594456254224668535202.jpg
-//https://picsum.photos/200
+
+  // Đếm số lượng task chưa hoàn thành
+  const pendingTasksCount = tasks.filter(task => !task.isCompleted).length;
+
+  // Sắp xếp các task
+  const sortedTasks = tasks
+    .slice()
+    .sort((a, b) => {
+      const dueDateA = new Date(a.date);
+      const dueDateB = new Date(b.date);
+
+      // Đưa các task chưa hoàn thành lên đầu
+      if (a.isCompleted !== b.isCompleted) {
+        return a.isCompleted ? 1 : -1;
+      }
+
+      // Sắp xếp các task chưa hoàn thành theo ngày đến hạn gần nhất
+      // và các task đã hoàn thành theo ngày đến hạn xa nhất
+      return a.isCompleted
+        ? dueDateB.getTime() - dueDateA.getTime() // Task đã hoàn thành: ngày đến hạn xa nhất
+        : dueDateA.getTime() - dueDateB.getTime(); // Task chưa hoàn thành: ngày đến hạn gần nhất
+    });
+
   return (
     <SafeAreaWrapper>
       <Box flex={1} mx="4" mt="4">
@@ -73,9 +92,7 @@ const HomeScreen = () => {
             entering={ZoomInEasyDown.delay(500).duration(700)}
           >
             Good {greeting}, {''}
-            <Text color="red500">
-            {user?.name}
-            </Text>
+            <Text color="red500">{user?.name}</Text>
           </AnimatedText>
           <Pressable onPress={logout}>
             <Image
@@ -87,25 +104,23 @@ const HomeScreen = () => {
 
         <Box flexDirection="row" alignItems="center" mt="2">
           <Text variant="textXl" fontWeight="500">
-            It’s {format(today, "eeee, LLL dd y")} - {tasks.length} tasks
+            It’s {format(today, "eeee, LLL dd y")} - {pendingTasksCount} tasks
           </Text>
         </Box>
 
         <Box height={26} />
         <TaskActions categoryId="" />
         <Box height={26} />
-       
+
         <FlatList
-          data={tasks}
-          renderItem={({ item }) =>( 
-          <Task task={item} mutateTasks={mutateTasks} />
-          )
-        }
+          data={sortedTasks}
+          renderItem={({ item }) => (
+            <Task task={item} mutateTasks={mutateTasks} />
+          )}
           ItemSeparatorComponent={() => <Box height={14} />}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item._id}
         />
-        
       </Box>
     </SafeAreaWrapper>
   );

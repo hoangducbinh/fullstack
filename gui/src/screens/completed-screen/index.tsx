@@ -7,7 +7,9 @@ import { fetcher } from "../../services/config"
 import Loader from "../../components/shared/loader"
 import SafeAreaWrapper from "../../components/shared/safe-area-wrapper"
 import { Box, Text } from "../../utils/theme"
-import Task from "../../components/tasks/task"
+import TaskList from "../../components/tasks/task-group-complated/task-list"
+import TaskCalendarComplatedScreen from "../../components/tasks/task-calendar"
+
 
 const CompletedScreen = () => {
   const {
@@ -23,28 +25,27 @@ const CompletedScreen = () => {
   }
 
   return (
-    <SafeAreaWrapper>
-      <Box flex={1} mx="4">
-        <Box height={16} />
-        <Box flexDirection="row">
-          <Text variant="textXl" fontWeight="700" ml="3">
-            Completed
-          </Text>
-        </Box>
-        <Box height={16} />
+    // <SafeAreaWrapper>
+    //   <Box flex={1} mx="4">
+    //     <Box height={16} />
+    //     <Box flexDirection="row">
+    //       <Text variant="textXl" fontWeight="700" ml="3">
+    //         Công việc đã hoàn thành
+    //       </Text>
+    //     </Box>
+    //     <Box height={16} />
+    //     <FlatList
+    //       data={[{ key: "taskList" }]}
+    //       showsVerticalScrollIndicator={false}
+    //       renderItem={() => <TaskList tasks={tasks} mutateTasks={mutateTasks} />}
+    //       ItemSeparatorComponent={() => <Box height={14} />}
+    //       keyExtractor={(item) => item.key}
+    //     />
+    //   </Box>
+    
+    // </SafeAreaWrapper>
+      <TaskCalendarComplatedScreen/>
+  );
+};
 
-        <FlatList
-          data={tasks}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => {
-            return <Task task={item} mutateTasks={mutateTasks} />
-          }}
-          ItemSeparatorComponent={() => <Box height={14} />}
-          keyExtractor={(item) => item._id}
-        />
-      </Box>
-    </SafeAreaWrapper>
-  )
-}
-
-export default CompletedScreen
+export default CompletedScreen;

@@ -1,7 +1,7 @@
-import { createBox, createText, createTheme } from "@shopify/restyle"
-import Animated from "react-native-reanimated"
-import { colors } from "./colors"
-import { textVariants } from "./text-variants"
+import { createBox, createText, createTheme } from "@shopify/restyle";
+import Animated from "react-native-reanimated";
+import { colors } from "./colors";
+import { textVariants } from "./text-variants";
 
 const theme = createTheme({
   colors: colors,
@@ -30,13 +30,45 @@ const theme = createTheme({
     "rounded-7xl": 28,
   },
   textVariants,
-})
+  
+  shadows: {
+    light: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    medium: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+      elevation: 5,
+    },
+    heavy: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 7,
+    },
+  },
+  borders: {
+    thin: {
+      borderWidth: 1,
+    },
+    thick: {
+      borderWidth: 2,
+    },
+  },
+});
 
-export type Theme = typeof theme
+export type Theme = typeof theme;
 
-export const Box = createBox<Theme>()
-export const Text = createText<Theme>()
-export const AnimatedText = Animated.createAnimatedComponent(Text)
-export const AnimatedBox = Animated.createAnimatedComponent(Box)
+export const Box = createBox<Theme>();
+export const Text = createText<Theme>();
+export const AnimatedText = Animated.createAnimatedComponent(Text);
+export const AnimatedBox = Animated.createAnimatedComponent(Box);
 
-export default theme
+export default theme;

@@ -10,6 +10,8 @@ import SafeAreaWrapper from "../../components/shared/safe-area-wrapper"
 import { Box, Text } from "../../utils/theme"
 import CreateNewList from "../../components/categories/create-new-list"
 
+
+
 const CategoriesScreen = () => {
   const { data, isLoading, error } = useSWR<ICategory[]>(
     "categories/",

@@ -53,6 +53,9 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
     navigation.navigate("EditTask", { task });
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
   return (
     <Pressable style={styles.pressable}>
       <View
@@ -60,7 +63,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
           styles.taskContainer,
           {
             backgroundColor: task.isCompleted ? "#d9fdd3" : "#ffffff",
-            borderColor: task.isCompleted ? "#8bc34a" : "#e1e1e1",
+            borderColor: task.isCompleted ? "#8bc34a" : "#38bdf8",
           },
         ]}
       >
@@ -86,7 +89,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
               },
             ]}
           >
-            {task.name}
+            {truncateText(task.name,20)}
           </Text>
         </Pressable>
         <View style={styles.dateContainer}>

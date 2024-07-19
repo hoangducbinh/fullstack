@@ -176,7 +176,7 @@ const CreateCategoryScreen = () => {
           )}
         </Box>
         <Box height={16} />
-        <Box bg="gray250" borderRadius="rounded-2xl">
+        <Box bg="white" borderRadius="rounded-2xl">
           <TextInput
             style={{
               fontSize: 20,
@@ -198,7 +198,7 @@ const CreateCategoryScreen = () => {
           />
         </Box>
         <Box height={24} />
-        <Box bg="gray250" p="4" borderRadius="rounded-2xl">
+        <Box bg="white" p="4" borderRadius="rounded-2xl">
           <Box
             bg="white"
             width={80}
@@ -241,14 +241,15 @@ const CreateCategoryScreen = () => {
 
         <Box height={24} />
 
-        <Box bg="gray250" p="4" borderRadius="rounded-2xl">
+        <Box bg="white" p="4" borderRadius="rounded-2xl">
           <Box
-            bg="white"
+            bg="blu200"
             width={60}
             p="2"
             mb="4"
             borderRadius="rounded-2xl"
             alignItems="center"
+            style={{borderColor:"#38bdf8" , borderWidth: 1}}
           >
             <Text
               variant="textBase"

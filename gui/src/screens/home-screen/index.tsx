@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, FlatList, Image, Pressable, StyleSheet } from "react-native";
+import { Alert, FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import { ZoomInEasyDown } from "react-native-reanimated";
 import useSWR from "swr";
 import { format } from "date-fns-tz";
@@ -14,6 +14,8 @@ import { AnimatedText, Box, Text } from "../../utils/theme";
 import TaskActions from "../../components/tasks/task-actions";
 import Task from "../../components/tasks/task";
 import { removeToken } from "../../services/api";
+import { colors } from "../../utils/theme/colors";
+
 
 const today = new Date();
 const greeting = getGreeting({ hour: today.getHours() });
@@ -85,33 +87,51 @@ const HomeScreen: React.FC = () => {
   return (
     <SafeAreaWrapper>
       <Box flex={1} mx="4" mt="4">
-        <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-          <AnimatedText
-            variant="textXl"
-            fontWeight="500"
-            entering={ZoomInEasyDown.delay(500).duration(700)}
-          >
-            Good {greeting}, {''}
-            <Text color="red500">{user?.name}</Text>
-          </AnimatedText>
-          <Pressable onPress={logout}>
+        {/* Header */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
+          <View style={styles.header}>
             <Image
               source={{ uri: "https://picsum.photos/200" }}
               style={styles.avatar}
             />
-          </Pressable>
+            <View style={styles.headerTextContainer}>
+              <AnimatedText
+                variant="textXl"
+                fontWeight="600"
+                entering={ZoomInEasyDown.delay(500).duration(700)}
+                style={{ color: colors.primary }}
+              >
+                Xin chào {greeting},
+                <Text style={{ color: colors.fuchsia500 }}> {user?.name}</Text>
+              </AnimatedText>
+              <Text style={{ color: colors.gray600 }}>
+                {format(today, "eeee, LLL dd y")}
+              </Text>
+            </View>
+          </View>
+         
         </Box>
 
-        <Box flexDirection="row" alignItems="center" mt="2">
-          <Text variant="textXl" fontWeight="500">
-            It’s {format(today, "eeee, LLL dd y")} - {pendingTasksCount} tasks
+        {/* Task Count */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
+          <Text style={{ fontSize: 18, fontWeight: '600' }}>
+            Hôm nay có
           </Text>
+          <Box
+            p="3"
+            style={[styles.taskCountContainer,{borderRadius: 8, backgroundColor: colors.gray100}]}
+          >
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.blu400 }}>
+              {pendingTasksCount} Công việc cần hoàn thành
+            </Text>
+          </Box>
         </Box>
 
-        <Box height={26} />
+        {/* Task Actions */}
         <TaskActions categoryId="" />
         <Box height={26} />
 
+        {/* Task List */}
         <FlatList
           data={sortedTasks}
           renderItem={({ item }) => (
@@ -130,8 +150,29 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 10,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  logoutButton: {
+    backgroundColor: colors.gray100,
+    borderRadius: 8,
+    padding: 8,
+    elevation: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  taskCountContainer: {
+    borderColor: colors.gray200,
+    borderWidth: 1,
+    padding: 8,
   },
 });

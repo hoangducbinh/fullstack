@@ -31,7 +31,7 @@ const CategoriesScreen = () => {
 
   return (
     <SafeAreaWrapper>
-      <Box flex={1} px="4">
+      <Box flex={1} px="4" style={{}}>
         <Text variant="textXl" fontWeight="700" mb="10">
           Categories
         </Text>

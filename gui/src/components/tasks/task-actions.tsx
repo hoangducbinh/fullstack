@@ -1,6 +1,6 @@
 import { format, isToday } from "date-fns"
 import React, { useState } from "react"
-import { FlatList, Pressable, TextInput } from "react-native"
+import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native"
 import { Calendar } from "react-native-calendars"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
@@ -93,12 +93,13 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
   return (
     <Box>
       <Box
-        bg="lightGray"
+        bg="white"
         px="4"
         py="3.5"
         borderRadius="rounded-5xl"
         flexDirection="row"
         position="relative"
+        style={{borderWidth:1, borderColor: "#38bdf8"}}
       >
         <TextInput
           placeholder="Create a new task"
@@ -121,7 +122,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
           }}
           onSubmitEditing={onCreateTask}
         />
-        <Box flexDirection="row" alignItems="center">
+        <Box flexDirection="row" alignItems="center" >
           <Pressable
             onPress={() => {
               setIsSelectingDate((prev) => !prev)
@@ -133,6 +134,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
               bg="white"
               p="2"
               borderRadius="rounded-xl"
+              style={{borderWidth:1, borderColor: "#38bdf8"}}
             >
               <Text>
                 {isToday(new Date(newTask.date))
@@ -153,6 +155,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
               alignItems="center"
               p="2"
               borderRadius="rounded-xl"
+              style={{borderWidth:1, borderColor: "#1d4ed8"}}
             >
               <Box
                 width={12}
@@ -162,6 +165,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                 mr="1"
                 style={{
                   borderColor: selectedCategory?.color.code,
+                
                 }}
               ></Box>
               <Text
@@ -169,7 +173,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                   color: selectedCategory?.color.code,
                 }}
               >
-               {truncateText(selectedCategory?.name || "Categories", 8)}
+               {truncateText(selectedCategory?.name || "Categories", 6)}
               </Text>
             </Box>
           </Pressable>
@@ -193,7 +197,8 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                   }}
                 >
                   <Box
-                    bg="gray250"
+                    style={{maxWidth: "auto", width: 200}}
+                    bg="white"
                     p="2"
                     borderTopStartRadius={index === 0 ? "rounded-3xl" : "none"}
                     borderTopEndRadius={index === 0 ? "rounded-3xl" : "none"}
@@ -212,8 +217,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                           newTask.categoryId === item._id ? "700" : "400"
                         }
                       >
-                       
-                       {truncateText(item.name, 8)}
+                       {truncateText(item.name, 20)}
                       </Text>
                     </Box>
                   </Box>
@@ -224,9 +228,21 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
         </Box>
       )}
       {isSelectingDate && (
-        <Box>
+        <Box style={{paddingTop:20}}>
+           <View style={styles.calendarContainer}>
           <Calendar
             minDate={format(today, "y-MM-dd")}
+            theme={{
+              calendarBackground: 'white',
+              textSectionTitleColor: 'blue',
+              selectedDayBackgroundColor: 'blue',
+              selectedDayTextColor: 'white',
+              todayTextColor: 'blue',
+              dayTextColor: 'black',
+              dotColor: 'blue',
+              selectedDotColor: 'white',
+              arrowColor: 'blue',
+            }}
             onDayPress={(day: { dateString: string | number | Date }) => {
               setIsSelectingDate(false)
               const selectedDate = new Date(day.dateString).toISOString()
@@ -238,6 +254,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
               })
             }}
           />
+          </View>
         </Box>
       )}
     </Box>
@@ -245,3 +262,16 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
 }
 
 export default TaskActions
+
+const styles = StyleSheet.create({
+  calendarContainer: {
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: 'white', // Thêm màu nền cố định
+    elevation: 3,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+})

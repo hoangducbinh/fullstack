@@ -49,11 +49,11 @@ export const getIcons = () => {
 
 export const getGreeting = ({ hour }: { hour: number }) => {
   if (hour < 12) {
-    return "morning"
+    return "buổi sáng"
   }
   if (hour < 18) {
-    return "evening"
+    return "buổi tối"
   } else {
-    return "night"
+    return "Chúc bạn có một buổi tối tốt lành"
   }
 }

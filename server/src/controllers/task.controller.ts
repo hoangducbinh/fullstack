@@ -44,13 +44,13 @@ const getAllTasksunfinished= async (request: AuthRequest, response: Response) =>
 
 const createTask = async (request: AuthRequest, response: Response) => {
     try {
-        const {name,date,categoryId,describe}: ITask= request.body
+        const {name,date,categoryId,description}: ITask= request.body
         const task = await Task.create(
             {
                 name,
                 date,
                 categoryId,
-                describe,
+                description,
                 user: request.user
             }
         )
@@ -140,7 +140,7 @@ const deleteTask = async (request: AuthRequest, response: Response) => {
 
 const editTask = async (request: AuthRequest, response: Response) => {
     try {
-      const { _id, categoryId, date, name }: ITask = request.body
+      const { _id, categoryId, date, name,description }: ITask = request.body
       await Task.updateOne(
         {
           _id,
@@ -150,6 +150,7 @@ const editTask = async (request: AuthRequest, response: Response) => {
             name,
             categoryId,
             date,
+            description
           },
         }
       )

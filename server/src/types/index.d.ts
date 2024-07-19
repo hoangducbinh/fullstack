@@ -36,5 +36,5 @@ export interface IUser {
     date: string
     createdAt: string
     updatedAt: string
-    describe: string
+    description: string
   }

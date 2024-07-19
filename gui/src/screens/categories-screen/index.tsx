@@ -32,6 +32,7 @@ const CategoriesScreen = () => {
   return (
     <SafeAreaWrapper>
       <Box flex={1} px="4" style={{}}>
+      <Box height={16} />
         <Text variant="textXl" fontWeight="700" mb="10">
           Categories
         </Text>
@@ -39,7 +40,7 @@ const CategoriesScreen = () => {
           data={data}
           showsVerticalScrollIndicator={false}
           renderItem={renderItem}
-          ItemSeparatorComponent={() => <Box height={14} />}
+          ItemSeparatorComponent={() => <Box />}
           keyExtractor={(item) => item._id}
         />
         <CreateNewList />

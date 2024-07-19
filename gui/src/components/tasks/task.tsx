@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import useSWRMutation from "swr/mutation";
-import { ITask } from "../../types";
-import axiosInstance from "../../services/config";
+import { ICategory, ITask } from "../../types";
+import axiosInstance, { fetcher } from "../../services/config";
 import { HomeScreenNavigationType } from "../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
 import { Box } from "../../utils/theme";
 import { isToday, format } from "date-fns";
+import useSWR from "swr";
 
 type TaskProps = {
   task: ITask;
@@ -33,6 +34,7 @@ const toggleTaskStatusRequest = async (
 
 const Task = ({ task, mutateTasks }: TaskProps) => {
   const { trigger } = useSWRMutation("tasks/update", toggleTaskStatusRequest);
+  const [updatedTask, setUpdatedTask] = useState(task);
   const navigation = useNavigation<HomeScreenNavigationType>();
 
   const toggleTaskStatus = async () => {
@@ -56,42 +58,57 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
+  const { data: categories, isLoading } = useSWR<ICategory[]>(
+    "categories",
+    fetcher
+  );
+  
+  const selectedCategory = categories?.find(
+    (_category) => _category._id === updatedTask.categoryId
+  );
+
   return (
-    <Pressable style={styles.pressable}>
+    <View style={styles.pressable}>
       <View
         style={[
           styles.taskContainer,
           {
-            backgroundColor: task.isCompleted ? "#d9fdd3" : "#ffffff",
-            borderColor: task.isCompleted ? "#8bc34a" : "#38bdf8",
+            backgroundColor: task.isCompleted ? "#fbcfe8" : "#ffffff",
+            borderColor: task.isCompleted ? "#f9a8d4" : "#38bdf8",
           },
         ]}
       >
-        <Pressable onPress={toggleTaskStatus} style={styles.taskContent}>
-          <View
+        <View style={styles.taskContent}>
+          <Pressable
             style={[
               styles.checkmarkContainer,
               {
-                backgroundColor: task.isCompleted ? "#8bc34a" : "#f0f0f0",
+                backgroundColor: task.isCompleted ? "#f472b6" : "#f0f0f0",
               },
             ]}
+            onPress={toggleTaskStatus}
           >
-            {task.isCompleted && (
-              <Icon name="check" size={20} color="#ffffff" />
+            {task.isCompleted && <Icon name="check" size={20} color="#ffffff" />}
+          </Pressable>
+          <View style={styles.taskTextContainer}>
+            <Text
+              style={[
+                styles.taskText,
+                {
+                  color: task.isCompleted ? "#4caf50" : "#0284c7",
+                  textDecorationLine: task.isCompleted ? "line-through" : "none",
+                },
+              ]}
+            >
+              {truncateText(task.name, 20)}
+            </Text>
+            {selectedCategory && (
+              <Text style={[styles.categoryText, { color: selectedCategory.color.code }]}>
+                {truncateText(selectedCategory.name, 20)}
+              </Text>
             )}
           </View>
-          <Text
-            style={[
-              styles.taskText,
-              {
-                color: task.isCompleted ? "#4caf50" : "#333333",
-                textDecorationLine: task.isCompleted ? "line-through" : "none",
-              },
-            ]}
-          >
-            {truncateText(task.name,20)}
-          </Text>
-        </Pressable>
+        </View>
         <View style={styles.dateContainer}>
           <Box
             bg="neutral100"
@@ -100,9 +117,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
             style={{ borderColor: "#e1e1e1", borderWidth: 1 }}
           >
             <Text style={styles.dateText}>
-              {isToday(new Date(task.date))
-                ? "Today"
-                : format(new Date(task.date), "MMM dd")}
+              {isToday(new Date(task.date)) ? "Today" : format(new Date(task.date), "MMM dd")}
             </Text>
           </Box>
         </View>
@@ -110,7 +125,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
           <Icon name="dots-three-vertical" size={20} color="#555555" />
         </Pressable>
       </View>
-    </Pressable>
+    </View>
   );
 };
 
@@ -148,9 +163,17 @@ const styles = StyleSheet.create({
     marginRight: 12,
     elevation: 1,
   },
+  taskTextContainer: {
+    flex: 1,
+  },
   taskText: {
     fontSize: 16,
     fontWeight: '500',
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '400',
+    marginTop: 4,
   },
   dateContainer: {
     marginRight: 12,

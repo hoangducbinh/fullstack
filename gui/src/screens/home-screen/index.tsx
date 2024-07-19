@@ -22,7 +22,7 @@ const greeting = getGreeting({ hour: today.getHours() });
 
 const HomeScreen: React.FC = () => {
   const { user } = useUserGlobalStore();
-
+ const defaultAvatar = "https://picsum.photos/200";
   const {
     data: tasks,
     isLoading,
@@ -90,8 +90,8 @@ const HomeScreen: React.FC = () => {
         {/* Header */}
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
           <View style={styles.header}>
-            <Image
-              source={{ uri: "https://picsum.photos/200" }}
+          <Image
+              source={{ uri: user?.avatar || defaultAvatar }} 
               style={styles.avatar}
             />
             <View style={styles.headerTextContainer}>
@@ -137,7 +137,7 @@ const HomeScreen: React.FC = () => {
           renderItem={({ item }) => (
             <Task task={item} mutateTasks={mutateTasks} />
           )}
-          ItemSeparatorComponent={() => <Box height={14} />}
+          ItemSeparatorComponent={() => <Box/>}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item._id}
         />

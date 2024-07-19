@@ -7,6 +7,7 @@ interface IUser {
 interface IAuthenticatedUser {
   email: string
   name: string
+  avatar: string
 }
 
 export interface IColor {
@@ -43,6 +44,7 @@ interface ITask {
   categoryId: string
   createdAt: string
   date: string
+  description: string
 }
 
 interface ITaskRequest {

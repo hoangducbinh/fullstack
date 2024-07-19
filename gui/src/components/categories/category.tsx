@@ -32,25 +32,25 @@ const Category = ({ category }: CategoryProps) => {
         <Box
           bg="white"
           p="4"
-          borderRadius="rounded-2xl"
-          shadowColor="gray600"
-          shadowOffset={{ width: 0, height: 8 }}
+          borderRadius="rounded-3xl"
+          shadowColor="gray500"
+          shadowOffset={{ width: 0, height: 2 }}
           shadowOpacity={0.2}
-          shadowRadius={12}
+          shadowRadius={8}
           mb="3"
           style={styles.container}
         >
           <Box flexDirection="row" alignItems="center" justifyContent="space-between">
             <Box flexDirection="row" alignItems="center">
-              <Text variant="textBase" fontWeight="600" mr="3" color="gray900">
+              <Text variant="textBase" fontWeight="700" mr="3" fontSize={20}>
                 {category.icon.symbol}
               </Text>
-              <Text variant="textBase" fontWeight="600" color="gray800">
+              <Text variant="textBase" fontWeight="600" color="gray650" fontSize={18}>
                 {category.name}
               </Text>
             </Box>
             <Pressable onPress={navigateToCreateCategory}>
-              <Icon name="dots-three-vertical" size={24} color="#4b5563" />
+              <Icon name="dots-three-vertical" size={24} color="#6b7280" />
             </Pressable>
           </Box>
         </Box>
@@ -61,9 +61,10 @@ const Category = ({ category }: CategoryProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', // Ensure it occupies full width for better alignment
-    elevation: 2, // Add elevation for a material-like effect on Android
-    backgroundColor: '#ffffff', // Ensure background color for better contrast
+    width: '100%',
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#f472b6',
   },
 });
 

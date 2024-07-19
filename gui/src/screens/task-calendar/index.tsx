@@ -17,7 +17,7 @@ const TaskCalendarScreen = () => {
     data: tasks,
     isLoading: isLoadingTasks,
     mutate: mutateTasks,
-  } = useSWR<ITask[]>(`tasks`, fetcher, {
+  } = useSWR<ITask[]>(`tasks/unfinished`, fetcher, {
     refreshInterval: 5000,
   });
 
@@ -36,6 +36,25 @@ const TaskCalendarScreen = () => {
   const handleDayPress = (day: any) => {
     setSelectedDate(day.dateString);
   };
+
+  // Sắp xếp các task
+  const sortedTasks = tasks
+    .slice()
+    .sort((a, b) => {
+      const dueDateA = new Date(a.date);
+      const dueDateB = new Date(b.date);
+
+      // Đưa các task chưa hoàn thành lên đầu
+      if (a.isCompleted !== b.isCompleted) {
+        return a.isCompleted ? 1 : -1;
+      }
+
+      // Sắp xếp các task chưa hoàn thành theo ngày đến hạn gần nhất
+      // và các task đã hoàn thành theo ngày đến hạn xa nhất
+      return a.isCompleted
+        ? dueDateB.getTime() - dueDateA.getTime() // Task đã hoàn thành: ngày đến hạn xa nhất
+        : dueDateA.getTime() - dueDateB.getTime(); // Task chưa hoàn thành: ngày đến hạn gần nhất
+    });
 
   return (
     <SafeAreaWrapper>
@@ -72,10 +91,10 @@ const TaskCalendarScreen = () => {
         </Text>
 
         <FlatList
-          data={tasks.filter(task => format(parseISO(task.date), "yyyy-MM-dd") === selectedDate)}
+          data={sortedTasks.filter(task => format(parseISO(task.date), "yyyy-MM-dd") === selectedDate)}
           renderItem={({ item }) => <Task task={item} mutateTasks={mutateTasks} />}
           keyExtractor={(item) => item._id}
-          ItemSeparatorComponent={() => <Box height={14} />}
+          ItemSeparatorComponent={() => <Box height={1}/>}
         />
       </Box>
     </SafeAreaWrapper>
@@ -88,10 +107,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: 'white', // Thêm màu nền cố định
     elevation: 3,
-    shadowColor: '#000000',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
+    borderColor: '#f472b6',
+    borderWidth: 1,
   },
 });
 

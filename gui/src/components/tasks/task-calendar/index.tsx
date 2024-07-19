@@ -9,14 +9,14 @@ import SafeAreaWrapper from "../../shared/safe-area-wrapper";
 import { Box, Text } from "../../../utils/theme";
 import { Calendar } from "react-native-calendars";
 import TaskUnScreen from "../task-group-complated/task-unscreen";
-import Icon from "react-native-vector-icons/Entypo"; // Import icon library
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Import icon library
+import Icon from "react-native-vector-icons/Entypo"; 
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+import Task from "../task";
 
 const TaskCalendarComplatedScreen = () => {
   const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), "yyyy-MM-dd"));
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
   const {
     data: tasks,
     isLoading: isLoadingTasks,
@@ -60,6 +60,26 @@ const TaskCalendarComplatedScreen = () => {
     });
   }, [tasks, searchQuery, selectedDate]);
 
+  const sortedTasks = filteredTasks
+  .slice()
+  .sort((a, b) => {
+    const dueDateA = new Date(a.date);
+    const dueDateB = new Date(b.date);
+
+    // Đưa các task chưa hoàn thành lên đầu
+    if (a.isCompleted !== b.isCompleted) {
+      return a.isCompleted ? 1 : -1;
+    }
+
+    // Sắp xếp các task chưa hoàn thành theo ngày đến hạn gần nhất
+    // và các task đã hoàn thành theo ngày đến hạn xa nhất
+    return a.isCompleted
+      ? dueDateB.getTime() - dueDateA.getTime() // Task đã hoàn thành: ngày đến hạn xa nhất
+      : dueDateA.getTime() - dueDateB.getTime(); // Task chưa hoàn thành: ngày đến hạn gần nhất
+  });
+
+ 
+
   return (
     <SafeAreaWrapper>
       <Box flex={1} mx="4">
@@ -71,7 +91,7 @@ const TaskCalendarComplatedScreen = () => {
 
         <View style={styles.headerContainer}>
           <View style={styles.searchContainer}>
-            <MaterialIcons name="search" size={24} color="#007bff" style={styles.searchIcon} />
+            <MaterialIcons name="search" size={24} color="#f472b6" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
               placeholder="Tìm kiếm công việc"
@@ -80,7 +100,7 @@ const TaskCalendarComplatedScreen = () => {
             />
           </View>
           <Pressable onPress={() => setCalendarVisible(!calendarVisible)} style={styles.iconButton}>
-            <Icon name={calendarVisible ? "chevron-up" : "chevron-down"} size={24} color="#007bff" />
+            <Icon name={calendarVisible ? "chevron-up" : "chevron-down"} size={24} color="#f472b6" />
           </Pressable>
         </View>
 
@@ -112,10 +132,10 @@ const TaskCalendarComplatedScreen = () => {
         </Text>
 
         <FlatList
-          data={filteredTasks}
-          renderItem={({ item }) => <TaskUnScreen task={item} mutateTasks={mutateTasks} />}
+          data={sortedTasks}
+          renderItem={({ item }) => <Task task={item} mutateTasks={mutateTasks} />}
           keyExtractor={(item) => item._id}
-          ItemSeparatorComponent={() => <Box height={14} />}
+          ItemSeparatorComponent={() => <Box />}
         />
       </Box>
     </SafeAreaWrapper>
@@ -134,11 +154,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     height: 40,
-    borderColor: '#007bff',
+    borderColor: '#f472b6',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
-    backgroundColor: '#f0f8ff', // Light background color
+    backgroundColor: '#fdf2f8', // Light background color
     shadowColor: '#000', // Shadow color
     shadowOffset: { width: 0, height: 2 }, // Shadow offset
     shadowOpacity: 0.2, // Shadow opacity
@@ -159,10 +179,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: 'white', // Thêm màu nền cố định
     elevation: 3,
-    shadowColor: '#000000',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
+    borderColor: '#f472b6',
+    borderWidth: 1,
   },
 });
 

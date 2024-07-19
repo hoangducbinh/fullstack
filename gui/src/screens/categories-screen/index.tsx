@@ -34,7 +34,7 @@ const CategoriesScreen = () => {
       <Box flex={1} px="4" style={{}}>
       <Box height={16} />
         <Text variant="textXl" fontWeight="700" mb="10">
-          Categories
+          Danh sách danh mục
         </Text>
         <FlatList
           data={data}
@@ -43,8 +43,10 @@ const CategoriesScreen = () => {
           ItemSeparatorComponent={() => <Box />}
           keyExtractor={(item) => item._id}
         />
-        <CreateNewList />
+         <Box height={24} />
+        <CreateNewList/>
       </Box>
+      
     </SafeAreaWrapper>
   )
 }

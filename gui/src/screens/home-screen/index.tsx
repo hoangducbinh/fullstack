@@ -82,7 +82,8 @@ const HomeScreen: React.FC = () => {
       return a.isCompleted
         ? dueDateB.getTime() - dueDateA.getTime() // Task đã hoàn thành: ngày đến hạn xa nhất
         : dueDateA.getTime() - dueDateB.getTime(); // Task chưa hoàn thành: ngày đến hạn gần nhất
-    });
+    })
+    .slice(0, 15); 
 
   return (
     <SafeAreaWrapper>
@@ -114,17 +115,9 @@ const HomeScreen: React.FC = () => {
 
         {/* Task Count */}
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
-          <Text style={{ fontSize: 18, fontWeight: '600' }}>
-            Hôm nay có
-          </Text>
-          <Box
-            p="3"
-            style={[styles.taskCountContainer,{borderRadius: 8, backgroundColor: colors.gray100}]}
-          >
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.blu400 }}>
-              {pendingTasksCount} Công việc cần hoàn thành
+               Hôm nay có {pendingTasksCount} công việc cần hoàn thành 👍
             </Text>
-          </Box>
         </Box>
 
         {/* Task Actions */}

@@ -31,11 +31,15 @@ const TaskCalendarComplatedScreen = () => {
 
   const markedDates = tasks.reduce((acc, task) => {
     const date = format(parseISO(task.date), "yyyy-MM-dd");
-    if (!acc[date]) {
-      acc[date] = { marked: true, dotColor: 'blue' };
-    }
+    acc[date] = {
+      marked: true,
+      dotColor: '#86198f',
+      // Custom style for the selected date
+      ...(date === selectedDate ? { selected: true, selectedColor: '#d946ef' } : {})
+    };
     return acc;
-  }, {} as { [key: string]: { marked: boolean, dotColor: string } });
+  }, {} as { [key: string]: { marked: boolean, dotColor: string, selected?: boolean, selectedColor?: string } });
+
 
   const handleDayPress = (day: any) => {
     setSelectedDate(day.dateString);
@@ -154,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     height: 40,
-    borderColor: '#f472b6',
+    borderColor: '#f0abfc',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    borderColor: '#f472b6',
+    borderColor: '#f0abfc',
     borderWidth: 1,
   },
 });

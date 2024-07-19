@@ -1,41 +1,80 @@
-
-import { Pressable } from "react-native"
-import { Box, Text } from "../../utils/theme"
+import React from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+import { Box, Text } from '../../utils/theme';
+import LinearGradient from 'react-native-linear-gradient';
 
 type ButtonProps = {
-  label: string
-  onPress: () => void
-  onLongPress?: () => void
-  disabled?: boolean
-  uppercase?: boolean
-}
+  label: string;
+  onPress: () => void;
+  onLongPress?: () => void;
+  disabled?: boolean;
+  uppercase?: boolean;
+};
 
 const Button = ({
   label,
-  onLongPress,
   onPress,
-  disabled,
-  uppercase,
+  onLongPress,
+  disabled = false,
+  uppercase = false,
 }: ButtonProps) => {
   return (
-    <Pressable onPress={onPress} onLongPress={onLongPress} disabled={disabled}>
-      <Box
-        bg={disabled ? "gray800" : "primary"}
-        py="3.5"
-        borderRadius="rounded-7xl"
+    <Pressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      disabled={disabled}
+      style={({ pressed }) => [
+        styles.buttonContainer,
+        { opacity: pressed || disabled ? 0.7 : 1 },
+      ]}
+    >
+      <LinearGradient
+        colors={['#ffffff', '#fcecff', '#f8daff', '#fae2ff', '#fae2ff', '#ffffff']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradient}
       >
-        <Text
-          variant="textXs"
-          fontWeight="700"
-          color="white"
-          textAlign="center"
-          textTransform={uppercase ? "uppercase" : "none"}
-        >
-          {label}
-        </Text>
-      </Box>
+        <Box style={styles.button}>
+          <Text
+            style={[
+              styles.text,
+              { textTransform: uppercase ? 'uppercase' : 'none' },
+            ]}
+          >
+            {label}
+          </Text>
+        </Box>
+      </LinearGradient>
     </Pressable>
-  )
-}
+  );
+};
 
-export default Button
+const styles = StyleSheet.create({
+  buttonContainer: {
+    borderRadius: 50,
+    overflow: 'hidden',
+    margin: 10,
+  },
+  gradient: {
+    borderRadius: 50,
+    padding: 1,
+  },
+  button: {
+    borderRadius: 50,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#9333ea',
+    backgroundColor: 'transparent',
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#9333ea',
+    textAlign: 'center',
+  },
+});
+
+export default Button;

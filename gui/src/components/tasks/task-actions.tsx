@@ -99,7 +99,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
         borderRadius="rounded-5xl"
         flexDirection="row"
         position="relative"
-        style={{borderWidth:1, borderColor: "#38bdf8"}}
+        style={{borderWidth:1, borderColor: "#f0abfc"}}
       >
         <TextInput
           placeholder="Create a new task"
@@ -155,7 +155,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
               alignItems="center"
               p="2"
               borderRadius="rounded-xl"
-              style={{borderWidth:1, borderColor: "#1d4ed8"}}
+              style={{borderWidth:1, borderColor: "#38bdf8"}}
             >
               <Box
                 width={12}

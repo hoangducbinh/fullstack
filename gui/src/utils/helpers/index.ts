@@ -26,6 +26,15 @@ export const getColors = () => {
   return colors
 }
 
+// const ICON_SET = {
+//   seed: "🌱",
+//   fries: "🍟",
+//   pizza: "🍕",
+//   rocket: "🚀",
+//   grinning: "😀",
+//   partying_face: "🥳",
+//   beach_umbrella: "🏖️",
+// }
 const ICON_SET = {
   seed: "🌱",
   fries: "🍟",
@@ -34,7 +43,21 @@ const ICON_SET = {
   grinning: "😀",
   partying_face: "🥳",
   beach_umbrella: "🏖️",
-}
+  coffee: "☕",
+  book: "📚",
+  star: "⭐",
+  heart: "❤️",
+  thumbs_up: "👍",
+  sunglasses: "😎",
+  musical_note: "🎵",
+  gift: "🎁",
+  soccer_ball: "⚽",
+  bicycle: "🚲",
+  mountain: "🏔️",
+  camera: "📷",
+  art: "🎨",
+};
+
 
 export const getIcons = () => {
   const icons: IIcon[] = Object.keys(ICON_SET).map((_icon) => {

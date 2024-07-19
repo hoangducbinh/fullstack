@@ -1,5 +1,5 @@
 import express from "express"
-import {createTask, getAllTaskCompleted, getTasksForToday, getAllTaskbyCategory, getAllTasks, toggleTaskStatus, deleteTask, editTask,} from "../controllers/task.controller"
+import {createTask, getAllTaskCompleted, getTasksForToday, getAllTaskbyCategory, getAllTasks, toggleTaskStatus, deleteTask, editTask, getAllTasksunfinished,} from "../controllers/task.controller"
 import { authenticationMiddleware } from "../middleware"
 
 const taskRoutes = express.Router()
@@ -14,6 +14,7 @@ taskRoutes.route("/tasks-completed").get(getAllTaskCompleted as any)
 taskRoutes.route("/today").get(getTasksForToday as any)
 taskRoutes.route("/delete/:id").delete(deleteTask as any)
 taskRoutes.route("/editTask/:id").put(editTask as any)
+taskRoutes.route("/unfinished").get(getAllTasksunfinished as any)
 
 
 export default taskRoutes

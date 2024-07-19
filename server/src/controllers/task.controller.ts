@@ -11,7 +11,6 @@ const getAllTasks = async (request: AuthRequest, response: Response) => {
         const userId = request.user;
         const tasks = await Task.find({
             user: userId,
-            isCompleted: false
         });
         
         return response.send(tasks);
@@ -21,6 +20,27 @@ const getAllTasks = async (request: AuthRequest, response: Response) => {
         throw error;
     }
 }
+
+
+const getAllTasksunfinished= async (request: AuthRequest, response: Response) => {
+  try {
+      const userId = request.user;
+      const tasks = await Task.find({
+          user: userId,
+          isCompleted: false
+      });
+      
+      return response.send(tasks);
+  } catch (error) {
+      console.log("Error fetching categories", error);
+      response.status(500).send({message: "Error creating category"});
+      throw error;
+  }
+}
+
+
+
+
 
 const createTask = async (request: AuthRequest, response: Response) => {
     try {
@@ -151,5 +171,6 @@ export {
     getAllTaskCompleted, 
     getTasksForToday,
     deleteTask,
-    editTask
+    editTask,
+    getAllTasksunfinished
 };

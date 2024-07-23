@@ -15,6 +15,8 @@ import { removeToken } from '../../services/api';
 import NavigateBack from '../../components/shared/navigate-back';
 import SafeAreaWrapper from '../../components/shared/safe-area-wrapper';
 
+const { updateUser } = useUserGlobalStore();
+
 
 const updatePasswordRequest = async (url: string, { arg }: { arg: { email: string, oldPassword: string, newPassword: string } }) => {
   try {
@@ -33,23 +35,23 @@ const updatePasswordRequest = async (url: string, { arg }: { arg: { email: strin
     console.error('Error changing password', error);
   }
 };
-// const updateProfiledRequest = async (url: string, { arg }: { arg: { email: string, newName: string, newAvatar: string } }) => {
-//   try {
-//     const response = await axiosInstance.put(url, {
-//       email: arg.email,
-//       newName: arg.newName,
-//       newAvatar: arg.newAvatar,
-//     });
+const updateProfiledRequest = async (url: string, { arg }: { arg: { email: string, newName: string, newAvatar: string } }) => {
+  try {
+    const response = await axiosInstance.put(url, {
+      email: arg.email,
+      newName: arg.newName,
+      newAvatar: arg.newAvatar,
+    });
 
-//     if (response.status === 200) {
-//       console.log('Profile updated successfully');
-//     } else {
-//       console.error(response.data.message || 'Failed to update profile');
-//     }
-//   } catch (error) {
-//     console.error('Error changing user name', error);
-//   }
-// };
+    if (response.status === 200) {
+      console.log('Profile updated successfully');
+    } else {
+      console.error(response.data.message || 'Failed to update profile');
+    }
+  } catch (error) {
+    console.error('Error changing user name', error);
+  }
+};
 const ProfileScreen = () => {
   const { user } = useUserGlobalStore();
   const [isEditingName, setIsEditingName] = useState(false);
@@ -60,9 +62,6 @@ const ProfileScreen = () => {
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-
-
-
   
   // const selectAvt = async () => {
   //   try {
@@ -77,6 +76,7 @@ const ProfileScreen = () => {
   //     console.error('Error selecting image:', error);
   //   }
   // };
+
   const logout = async () => {
     const { updateUser } = useUserGlobalStore.getState();
     Alert.alert(
@@ -119,23 +119,27 @@ const ProfileScreen = () => {
       Alert.alert('Lỗi', 'Lỗi không thể đổi mật khẩu');
     }
   };
-  // const handleProfileChange = async () => {
-  //   try {
-  //     if (newName.trim().length > 0) {
-  //       await updateProfiledRequest('/users/update-profile', {
-  //         arg: { email, newName, newAvatar }
-  //       });
-  //       setIsEditingName(false);
-  //       Alert.alert('Thông báo', 'Tên người dùng đã được thay đổi');
-  //     } else {
-  //       Alert.alert('Lỗi', 'Vui lòng nhập thông tin');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error password', error);
-  //     Alert.alert('Lỗi', 'Lỗi không thể đổi tên người dùng');
-  //   }
-  // };
-  
+  const handleProfileChange = async () => {
+    const { updateUser } = useUserGlobalStore.getState();
+    try {
+      if (newName.trim().length > 0) {
+        await updateProfiledRequest('/users/update-profile', {
+          arg: {email: email ?? '', newName, newAvatar }
+        });
+        
+        setIsEditingName(false);
+        updateUser({ ...user, name: newName } as any);
+        Alert.alert('Thông báo', 'Tên người dùng đã được thay đổi');
+        
+      } else {
+        Alert.alert('Lỗi', 'Vui lòng nhập thông tin');
+      }
+    } catch (error) {
+      console.error('Error password', error);
+      Alert.alert('Lỗi', 'Lỗi không thể đổi tên người dùng');
+    }
+  };
+
   const handleCancel = () => {
     setIsEditingPassword(false);
     setIsEditingName(false);
@@ -187,7 +191,7 @@ const ProfileScreen = () => {
                 <Pressable onPress={handleCancel}>
                   <Text style={[styles.button, {color: '#EB91FF', backgroundColor: 'white'}]}>Hủy</Text>
                 </Pressable>
-                <Pressable>
+                <Pressable onPress={handleProfileChange}>
                   <Text style={styles.button}>Lưu</Text>
                 </Pressable>
               </View>

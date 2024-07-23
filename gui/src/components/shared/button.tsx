@@ -29,7 +29,7 @@ const Button = ({
       ]}
     >
       <LinearGradient
-        colors={['#ffffff', '#fcecff', '#f8daff', '#fae2ff', '#fae2ff', '#ffffff']}
+        colors={['#e879f9', '#DB3AFF', '#DB3AFF', '#e879f9' ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
@@ -51,7 +51,7 @@ const Button = ({
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    borderRadius: 50,
+    borderRadius: 10,
     overflow: 'hidden',
     margin: 10,
   },
@@ -60,19 +60,17 @@ const styles = StyleSheet.create({
     padding: 1,
   },
   button: {
-    borderRadius: 50,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    borderRadius: 10,
+    paddingVertical: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#9333ea',
+    
     backgroundColor: 'transparent',
   },
   text: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#9333ea',
+    color: 'white',
     textAlign: 'center',
   },
 });

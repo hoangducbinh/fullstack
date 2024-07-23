@@ -43,8 +43,9 @@ const CategoriesScreen = () => {
           ItemSeparatorComponent={() => <Box />}
           keyExtractor={(item) => item._id}
         />
-         <Box height={24} />
+         
         <CreateNewList/>
+        <Box height={24} />
       </Box>
       
     </SafeAreaWrapper>

@@ -52,4 +52,5 @@ interface ITaskRequest {
   isCompleted: boolean
   categoryId: string
   date: string
+  description: string
 }

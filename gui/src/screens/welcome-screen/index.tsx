@@ -1,72 +1,66 @@
 
-import { useNavigation } from "@react-navigation/native"
-import React from "react"
-import { Image } from "react-native"
-import Animated, { ZoomIn } from "react-native-reanimated"
-import { AuthScreenNavigationType } from "../../navigation/types"
-import SafeAreaWrapper from "../../components/shared/safe-area-wrapper"
-import LinearGradient from "react-native-linear-gradient"
-import { Box, Text } from "../../utils/theme"
-import Button from "../../components/shared/button"
+import { Image, Pressable, View, } from 'react-native'
+import React from 'react'
+import { Box, Text } from '../../utils/theme'
+import { useNavigation } from '@react-navigation/native'
+import { AuthScreenNavigationType } from '../../navigation/types'
+import SafeAreaWrapper from '../../components/shared/safe-area-wrapper'
+import LinearGradient from 'react-native-linear-gradient'
+import Button from '../../components/shared/button'
 
-const BLOSSOM_IMAGE =
-  "https://res.cloudinary.com/dooxt2sgsdooxt2sgs23233/image/upload/v1676809769/youtube/2023/february/blossom/icon_fb36u3.png"
 
 const WelcomeScreen = () => {
-  const navigation = useNavigation<AuthScreenNavigationType<"Welcome">>()
-  const navigateToSignInScreen = () => {
-    navigation.navigate("SignIn")
-  }
-  const navigateToSignUpScreen = () => {
-    navigation.navigate("SignUp")
-  }
 
-  return (
-    <SafeAreaWrapper>
-      <LinearGradient
-        colors={[
-          "#ffffff",
-          "#fcecff",
-          "#f8daff",
-          "#fae2ff",
-          "#fae2ff",
-          "#ffffff",
-        ]}
-        style={{ flex: 1 }}
-      >
+    const navigation = useNavigation<AuthScreenNavigationType<"Welcome">>()
+    const navigationToSignInScreen = () => {
+        navigation.navigate('SignIn')
+    }
+    const navigationToSignUpScreen = () => {
+        navigation.navigate('SignUp')
+    }
+
+    return (
+        <SafeAreaWrapper>
+            <LinearGradient
+            colors={[
+                "#ffffff",
+                "#fcecff",
+                "#f8daff",
+                "#fae2ff",
+                "#fae2ff",
+                "#ffffff",
+              ]}
+            style={{ flex: 1 }}
+            >
         <Box flex={1} justifyContent="center">
-          <Box alignItems="center" mb="3.5">
-            <Animated.View entering={ZoomIn.duration(2000)}>
-              <Image
-                source={{
-                  uri: BLOSSOM_IMAGE,
-                  width: 120,
-                  height: 120,
-                }}
+            <Box alignItems='center' mb="3.5">
+            <Image
+                    source={require('../../image/logo.png')}
+
               />
-            </Animated.View>
-          </Box>
-          <Text textAlign="center" variant="textXl" fontWeight="700">
-            Do you want to be more productive?
-          </Text>
-          <Box my="3.5" mx="10">
+            </Box>
+            <Box my="3.5" mx="10">
             <Button
-              label="Start your journey"
-              onPress={navigateToSignUpScreen}
+              label="Đăng Nhập"
+              onPress={navigationToSignInScreen}
             />
+
           </Box>
+          <Pressable onPress={navigationToSignUpScreen}>
           <Text
             textAlign="center"
             variant="textXs"
             fontWeight="700"
-            color="gray5"
+            fontSize={14}
+            color="purple1000"
           >
-            26,698 registered today
+            Đăng ký ngay
           </Text>
+          </Pressable>
         </Box>
-      </LinearGradient>
-    </SafeAreaWrapper>
-  )
+        </LinearGradient>
+        </SafeAreaWrapper>
+    )
 }
 
 export default WelcomeScreen

@@ -75,7 +75,7 @@ export const getGreeting = ({ hour }: { hour: number }) => {
     return "buổi sáng"
   }
   if (hour < 18) {
-    return "buổi tối"
+    return "buổi chiều"
   } else {
     return "Chúc bạn có một buổi tối tốt lành"
   }

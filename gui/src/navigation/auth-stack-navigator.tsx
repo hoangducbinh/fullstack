@@ -4,6 +4,7 @@ import WelcomeScreen from "../screens/welcome-screen"
 import SignInScreen from "../screens/sign-in-screen"
 import SignUpScreen from "../screens/sign-up-screen"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import ForgotPassScreen from "../screens/forgot-password-screen"
 
 const Stack = createNativeStackNavigator<AuthStackParamList>()
 
@@ -31,6 +32,18 @@ const AuthStackNavigator = () => {
         }}
         component={SignUpScreen}
       />
+
+<Stack.Screen
+        name="ForgotPass"
+        options={{
+          headerShown: false,
+        }}
+        component={ForgotPassScreen}
+      />
+
+
+
+
     </Stack.Navigator>
   )
 }

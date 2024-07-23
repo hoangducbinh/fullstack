@@ -4,6 +4,7 @@ import React from "react"
 import { HomeStackParamList } from "./types"
 import HomeScreen from "../screens/home-screen"
 import EditTaskScreen from "../screens/edit-task"
+import ProfileScreen from "../screens/profile-screen"
 
 const Stack = createNativeStackNavigator<HomeStackParamList>()
 
@@ -24,6 +25,16 @@ const HomeStackNavigator = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+
+
     </Stack.Navigator>
   )
 }

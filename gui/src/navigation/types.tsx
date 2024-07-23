@@ -15,6 +15,7 @@ export type AuthStackParamList = {
   Welcome: undefined
   SignIn: undefined
   SignUp: undefined
+  ForgotPass: undefined
 }
 
 export type RootBottomTabParamList = {
@@ -30,6 +31,7 @@ export type HomeStackParamList = {
   EditTask: {
     task: ITask
   }
+  Profile: undefined
 }
 
 export type CategoriesStackParamList = {

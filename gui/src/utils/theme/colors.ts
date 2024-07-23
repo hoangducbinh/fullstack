@@ -157,6 +157,7 @@ export const palette = {
   purple700: "#7e22ce",
   purple800: "#6b21a8",
   purple900: "#581c87",
+  purple1000: "#DB3AFF",
 
   fuchsia50: "#fdf4ff",
   fuchsia100: "#fae8ff",
@@ -167,7 +168,7 @@ export const palette = {
   fuchsia600: "#c026d3",
   fuchsia700: "#a21caf",
   fuchsia800: "#86198f",
-  fuchsia900: "#701a75",
+  fuchsia900: "#EB91FF",
 
   pink50: "#fdf2f8",
   pink100: "#fce7f3",
@@ -348,6 +349,7 @@ export const colors = {
   purple700: palette.purple700,
   purple800: palette.purple800,
   purple900: palette.purple900,
+  purple1000: palette.purple1000,
 
   fuchsia50: palette.fuchsia50,
   fuchsia100: palette.fuchsia100,

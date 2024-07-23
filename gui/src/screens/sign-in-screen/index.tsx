@@ -2,7 +2,7 @@
 import { useNavigation } from "@react-navigation/native"
 import React from "react"
 import { Controller, useForm } from "react-hook-form"
-import { Pressable } from "react-native"
+import { Image, Pressable } from "react-native"
 import { AuthScreenNavigationType } from "../../navigation/types"
 import useUserGlobalStore from "../../store/useUserGlobalStore"
 import { IUser } from "../../types"
@@ -11,12 +11,15 @@ import SafeAreaWrapper from "../../components/shared/safe-area-wrapper"
 import { Box, Text } from "../../utils/theme"
 import Input from "../../components/shared/input"
 import Button from "../../components/shared/button"
+import Animated, { ZoomIn } from "react-native-reanimated"
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthScreenNavigationType<"SignIn">>()
-  const navigateToSignInScreen = () => {
-    navigation.navigate("SignUp")
-  }
+  
+  const navigationToSignUpScreen = () => {
+    navigation.navigate('SignUp')
+
+}
 
   const { updateUser } = useUserGlobalStore()
   const {
@@ -40,17 +43,24 @@ const SignInScreen = () => {
       updateUser({
         email: _user.email,
         name: _user.name,
+        avatar: _user.avatar,
       })
     } catch (error) {}
   }
 
+  const navigationToForgotPassScreen = () => {
+    navigation.navigate('ForgotPass')
+
+}
   return (
     <SafeAreaWrapper>
-      <Box flex={1} px="5.5" justifyContent="center">
-        <Text variant="textXl" fontWeight="700">
-          Welcome Back
-        </Text>
-        <Box mb="6" />
+      <Box flex={1} px="5.5" justifyContent='center'>
+            <Animated.View entering={ZoomIn.duration(2000)}>
+            <Image
+                    source={require('../../image/logo.png')}
+                    style={{alignSelf:'center', height: 110, width:120}}
+              />
+              </Animated.View>
         <Controller
           control={control}
           rules={{
@@ -88,14 +98,21 @@ const SignInScreen = () => {
           name="password"
         />
         <Box mt="5.5" />
-        <Pressable onPress={navigateToSignInScreen}>
-          <Text color="primary" textAlign="right">
-            Register?
-          </Text>
-        </Pressable>
-        <Box mb="5.5" />
-
-        <Button label="Login" onPress={handleSubmit(onSubmit)} uppercase />
+                <Pressable onPress={navigationToForgotPassScreen}>
+                    <Text color="purple1000" textAlign="right">
+                        Quên mật khẩu?
+                    </Text>
+                </Pressable>
+                <Box mb="5.5" />
+                <Button label='Đăng nhập' onPress={handleSubmit(onSubmit)} uppercase />
+                <Box mb="5.5" />
+                <Pressable onPress={navigationToSignUpScreen}>
+                    <Text color="purple1000" textAlign="center">
+                        Đăng ký tài khoản
+                    </Text>
+                </Pressable>
+                <Box mt="5.5" />
+       
       </Box>
     </SafeAreaWrapper>
   )

@@ -15,7 +15,7 @@ const NavigateBack = () => {
   }
   return (
     <Pressable onPress={navigateBack}>
-      <Box bg="fuchsia100" p="2" borderRadius="rounded-7xl">
+      <Box bg="fuchsia100" style={{width:40, alignContent:'center'}} p="2" borderRadius="rounded-7xl">
         <Icon name="chevron-back" size={24} color={theme.colors.fuchsia500} />
       </Box>
     </Pressable>

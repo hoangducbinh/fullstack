@@ -12,7 +12,6 @@ import { AnimatedText, Box, Text } from "../../utils/theme";
 import Task from "../../components/tasks/task";
 import { format } from "date-fns-tz";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ModalPortal } from 'react-native-modals';
 import LinearGradient from 'react-native-linear-gradient';
 
 const today = new Date();
@@ -158,8 +157,6 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
           <Text style={styles.plusText}>+</Text>
         </LinearGradient>
       </Pressable>
-
-      <ModalPortal />
     </SafeAreaWrapper>
   );
 };

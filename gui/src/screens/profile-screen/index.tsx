@@ -15,7 +15,6 @@ import { removeToken } from '../../services/api';
 import NavigateBack from '../../components/shared/navigate-back';
 import SafeAreaWrapper from '../../components/shared/safe-area-wrapper';
 
-const { updateUser } = useUserGlobalStore();
 
 
 const updatePasswordRequest = async (url: string, { arg }: { arg: { email: string, oldPassword: string, newPassword: string } }) => {

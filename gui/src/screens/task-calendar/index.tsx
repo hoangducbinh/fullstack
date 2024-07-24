@@ -17,7 +17,7 @@ const TaskCalendarScreen = () => {
     data: tasks,
     isLoading: isLoadingTasks,
     mutate: mutateTasks,
-  } = useSWR<ITask[]>(`tasks/unfinished`, fetcher, {
+  } = useSWR<ITask[]>(`tasks/`, fetcher, {
     refreshInterval: 5000,
   });
 

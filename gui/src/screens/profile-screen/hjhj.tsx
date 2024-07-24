@@ -3,18 +3,16 @@ import { View, Text, Image, Pressable, TextInput, StyleSheet, Alert, Modal } fro
 import Icon from 'react-native-vector-icons/FontAwesome';
 import useSWR from 'swr';
 import { ITask, IUser } from '../../types';
-import axiosInstance, { fetcher } from '../../services/config';
+import axiosInstance, { fetcher, removeToken } from '../../services/config';
 import useUserGlobalStore from '../../store/useUserGlobalStore';
-
+import NavigateBack from '../../navigation/navigate-back';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ChangeProfilePicture from '../../components/user/change-pass';
 import { Box } from '../../utils/theme';
 import Input from '../../components/shared/input';
-
-import { removeToken } from '../../services/api';
-import NavigateBack from '../../components/shared/navigate-back';
+import ImagePicker from 'react-native-image-crop-picker';
 import SafeAreaWrapper from '../../components/shared/safe-area-wrapper';
-
 
 
 const updatePasswordRequest = async (url: string, { arg }: { arg: { email: string, oldPassword: string, newPassword: string } }) => {
@@ -51,37 +49,38 @@ const updateProfiledRequest = async (url: string, { arg }: { arg: { email: strin
     console.error('Error changing user name', error);
   }
 };
-const ProfileScreen = () => {
+const Profile = () => {
   const { user } = useUserGlobalStore();
   const [isEditingName, setIsEditingName] = useState(false);
-  const [newName, setNewName] = useState(user?.name || '');
+  const [newName, setNewName] = useState('');
   const [email, setEmail] = useState(user?.email);
   const [selectedAvt, setSelectedAvt] = useState(null);
   const [newAvatar, setNewAvatar] = useState('');
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-
   const { data: tasks, isLoading, mutate: mutateTasks } = useSWR<ITask[]>("tasks/", fetcher, {
     refreshInterval: 1000,
   });
+  const [reload, setReload] = useState(false);
+  const reloadPage = () => {
+    setReload(!reload)
+  }
   const pendingTasksCount = tasks?.filter(task => !task.isCompleted).length ?? 0;
-  const unCompletedTask = (tasks ?? []).length - pendingTasksCount;
-  
-  // const selectAvt = async () => {
-  //   try {
-  //     const image = await ImagePicker.openPicker({
-  //       width: 300,
-  //       height: 400,
-  //       cropping: true,
-  //     });
+  const unCompletedTask = tasks.length - pendingTasksCount;
+  const selectAvt = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+      });
 
-  //     setSelectedAvt(image.path);
-  //   } catch (error) {
-  //     console.error('Error selecting image:', error);
-  //   }
-  // };
-
+      setSelectedAvt(image.path);
+    } catch (error) {
+      console.error('Error selecting image:', error);
+    }
+  };
   const logout = async () => {
     const { updateUser } = useUserGlobalStore.getState();
     Alert.alert(
@@ -112,7 +111,7 @@ const ProfileScreen = () => {
     try {
       if (oldPassword.trim().length > 0 && newPassword.trim().length > 0) {
         await updatePasswordRequest('/users/change-password', {
-          arg: { email: email ?? '', oldPassword, newPassword }
+          arg: { email, oldPassword, newPassword }
         });
         setIsEditingPassword(false);
         Alert.alert('Thông báo', 'Mật khẩu đã được thay đổi');
@@ -129,13 +128,13 @@ const ProfileScreen = () => {
     try {
       if (newName.trim().length > 0) {
         await updateProfiledRequest('/users/update-profile', {
-          arg: {email: email ?? '', newName, newAvatar }
+          arg: { email, newName, newAvatar }
         });
-        
         setIsEditingName(false);
         updateUser({ ...user, name: newName } as any);
+        reloadPage();
         Alert.alert('Thông báo', 'Tên người dùng đã được thay đổi');
-        
+
       } else {
         Alert.alert('Lỗi', 'Vui lòng nhập thông tin');
       }
@@ -144,18 +143,17 @@ const ProfileScreen = () => {
       Alert.alert('Lỗi', 'Lỗi không thể đổi tên người dùng');
     }
   };
-
   const handleCancel = () => {
     setIsEditingPassword(false);
     setIsEditingName(false);
   };
   return (
-    
     <SafeAreaWrapper>
     <NavigateBack/>
       <Pressable onPress={() => setIsEditingName(false)}>
       </Pressable>
       <View style={styles.container}>
+       
         <Pressable>
           <Image
             source={{ uri: "https://picsum.photos/200" }}
@@ -188,14 +186,14 @@ const ProfileScreen = () => {
               <Box mb='4'/>
               <Input
                     label="Tên người dùng"
-                    placeholder="Nhập tên người dùng mới"
+                    placeholder={user.name}
                     value={newName}
                     onChangeText={setNewName}
               />
               <Box mb='6'/>
-              {/* <Pressable  onPress={selectAvt}>
+              <Pressable  onPress={selectAvt}>
               <Text>Chọn hình ảnh</Text>
-              </Pressable> */}
+              </Pressable>
               <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'space-between', width: 350 }}>
                 <Pressable onPress={handleCancel}>
                   <Text style={[styles.button, {color: '#EB91FF', backgroundColor: 'white'}]}>Hủy</Text>
@@ -214,7 +212,7 @@ const ProfileScreen = () => {
               <Icon name="camera" size={20} />
               <Text style={styles.text}>Đổi ảnh đại diện</Text>
             </View>
-            <Pressable>
+            <Pressable onPress={() => {<ChangeProfilePicture/>}}>
               <Icon name="angle-right" size={24} />
             </Pressable>
           </View>
@@ -327,7 +325,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 20,
     width: 170,
-    height: 60,
+    height: 50,
     textAlign: 'center',
   },
   selectImageButton: {
@@ -339,4 +337,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen;
+export default Profile;

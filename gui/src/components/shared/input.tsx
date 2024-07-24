@@ -17,14 +17,15 @@ const Input = ({ label, error, ...props }: InputProps) => {
         style={{
           padding: 16,
           borderWidth: 1,
-          borderColor: error ? theme.colors.rose500 : theme.colors.grey,
+          borderColor: error ? theme.colors.rose500 : theme.colors.purple900,
           borderRadius: theme.borderRadii["rounded-7xl"],
         }}
         {...props}
       />
       {error && (
         <Text mt="3.5" color="rose500">
-          {label} is required
+          {label} không được để trống
+       
         </Text>
       )}
     </Box>

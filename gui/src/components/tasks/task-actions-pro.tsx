@@ -152,7 +152,7 @@ const TaskActions = ({ categoryId, isModalVisible, setModalVisible }: TaskAction
                 }}
               />
             </View>
-            <Box style={{width:435}}>
+            <Box style={{width:335}}>
               <Button label='Thêm' onPress={onCreateTask}/>
             </Box>
           </Pressable>
@@ -171,7 +171,7 @@ const TaskActions = ({ categoryId, isModalVisible, setModalVisible }: TaskAction
           >
             <Pressable
               style={styles.bottomModal}
-              onPress={(e) => e.stopPropagation()} // Prevents modal closing when clicking inside
+              onPress={(e) => e.stopPropagation()}
             >
               <Calendar
                 minDate={format(today, "y-MM-dd")}

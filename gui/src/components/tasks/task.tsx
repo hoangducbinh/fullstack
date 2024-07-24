@@ -96,7 +96,8 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
                 styles.taskText,
                 {
                   color: task.isCompleted ? "#4caf50" : "#0284c7",
-                  textDecorationLine: task.isCompleted ? "line-through" : "none",
+                  // textDecorationLine: task.isCompleted ? "line-through" : "none",
+                  textDecorationLine: task.isCompleted ? "none" : "none",
                 },
               ]}
             >

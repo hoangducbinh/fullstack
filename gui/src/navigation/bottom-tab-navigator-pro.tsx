@@ -8,6 +8,7 @@ import CategoriesStackNavigator from "./categories-stack-navigator";
 import CompletedScreen from "../screens/completed-screen";
 import TodayScreen from "../screens/today-screen";
 import TaskCalendarScreen from "../screens/task-calendar";
+import theme from '../utils/theme';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +35,7 @@ const CustomTabButton = ({ children, onPress }: any) => (
         height: Platform.OS === "ios" ? 50 : 60,
         top: Platform.OS === "ios"? -10 : -20,
         borderRadius: Platform.OS === "ios"? 25: 30,
-        backgroundColor: '#ffff',
+        backgroundColor:theme.colors.pink500,
         alignItems: "center",
         justifyContent: 'center',
       }}
@@ -51,7 +52,7 @@ const BottomTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: theme.colors.pink500,
-        tabBarInactiveTintColor: theme.colors.green50,
+        tabBarInactiveTintColor: theme.colors.purple900,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
         headerShown: false,
@@ -106,13 +107,13 @@ const BottomTabNavigator = () => {
                 height: Platform.OS === "ios" ? 50 : 60,
                 top: Platform.OS === "ios"? -10 : -10,
                 borderRadius: Platform.OS === "ios"? 25: 30,
-                backgroundColor: '#22c55e',
+                backgroundColor:theme.colors.pink500,
                 alignItems: "center",
                 justifyContent: 'center',
                 }}>
                 <Icon
                   name="calendar-today"
-                  color={color}
+                  color={'#ffff'}
                   size={40}
                 />
               </View>
@@ -136,10 +137,10 @@ const BottomTabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: '#22c55e',
+    backgroundColor: '#ffff',
     borderTopWidth: 0,
-    elevation: 2,
-    shadowColor: '#000',
+    elevation: 1,
+    shadowColor: '#fae8ff',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

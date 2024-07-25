@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "@shopify/restyle";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text, Platform } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import HomeStackNavigator from "./home-stack-navigator";
 import CategoriesStackNavigator from "./categories-stack-navigator";
@@ -23,19 +23,20 @@ const CustomTabBarIcon = ({ name, color }: CustomTabBarIconProps) => (
 const CustomTabButton = ({ children, onPress }: any) => (
   <TouchableOpacity
     style={{
-      top: -20,
+      alignItems: "center",
       justifyContent: 'center',
-      alignItems: 'center',
-      ...styles.shadow
     }}
     onPress={onPress}
   >
     <View
       style={{
-        width: 70,
-        height: 70,
-        borderRadius: 35,
-        backgroundColor: '#fff'
+        width: Platform.OS === "ios" ? 50 : 60,
+        height: Platform.OS === "ios" ? 50 : 60,
+        top: Platform.OS === "ios"? -10 : -20,
+        borderRadius: Platform.OS === "ios"? 25: 30,
+        backgroundColor: '#ffff',
+        alignItems: "center",
+        justifyContent: 'center',
       }}
     >
       {children}
@@ -50,13 +51,12 @@ const BottomTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: theme.colors.pink500,
-        tabBarInactiveTintColor: theme.colors.gray550,
+        tabBarInactiveTintColor: theme.colors.green50,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
         headerShown: false,
         tabBarIcon: ({ color }) => {
           let iconName;
-
           switch (route.name) {
             case 'HomeStack':
               iconName = 'home';
@@ -76,7 +76,6 @@ const BottomTabNavigator = () => {
             default:
               iconName = 'help-circle';
           }
-
           return <CustomTabBarIcon name={iconName} color={color} />;
         },
       })}
@@ -89,28 +88,47 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Completed"
         component={CompletedScreen}
-        options={{ title: "Completed" }}
+        options={{ title: "Hoàn thành" }}
       />
       <Tab.Screen
         name="Today"
         component={TodayScreen}
         options={{
           title: "",
-          tabBarButton: (props) => <CustomTabButton {...props} />,
-          tabBarIcon: ({ color }) => (
-            <Icon name="calendar-today" color={color} size={40} />
-          ),
+         // tabBarButton: (props) => <CustomTabButton {...props}/>,
+          // tabBarIcon: ({ color }) => (
+          //   <Icon name="calendar-today" color={color} size={40} />
+          // ),
+          tabBarIcon: ({ color }) => {
+            return (
+              <View style={{
+                width: Platform.OS === "ios" ? 50 : 60,
+                height: Platform.OS === "ios" ? 50 : 60,
+                top: Platform.OS === "ios"? -10 : -10,
+                borderRadius: Platform.OS === "ios"? 25: 30,
+                backgroundColor: '#22c55e',
+                alignItems: "center",
+                justifyContent: 'center',
+                }}>
+                <Icon
+                  name="calendar-today"
+                  color={color}
+                  size={40}
+                />
+              </View>
+            );
+          }
         }}
       />
       <Tab.Screen
         name="CategoriesStack"
         component={CategoriesStackNavigator}
-        options={{ title: "Categories" }}
+        options={{ title: "Danh mục" }}
       />
       <Tab.Screen
         name="Settings"
         component={TaskCalendarScreen}
-        options={{ title: "Calendar" }}
+        options={{ title: "Lịch trình" }}
       />
     </Tab.Navigator>
   );
@@ -118,7 +136,7 @@ const BottomTabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: '#fdf2f8',
+    backgroundColor: '#22c55e',
     borderTopWidth: 0,
     elevation: 2,
     shadowColor: '#000',

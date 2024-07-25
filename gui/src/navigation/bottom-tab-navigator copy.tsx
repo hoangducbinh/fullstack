@@ -1,26 +1,46 @@
+import React from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "@shopify/restyle";
-import CategoriesStackNavigator from "./categories-stack-navigator";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import HomeStackNavigator from "./home-stack-navigator";
-import { RootBottomTabParamList } from "./types";
-import Icons from "../components/shared/icons";
+import CategoriesStackNavigator from "./categories-stack-navigator";
 import CompletedScreen from "../screens/completed-screen";
 import TodayScreen from "../screens/today-screen";
 import TaskCalendarScreen from "../screens/task-calendar";
-import { StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const Tab = createBottomTabNavigator<RootBottomTabParamList>();
-
+const Tab = createBottomTabNavigator();
 
 interface CustomTabBarIconProps {
   name: string;
   color: string;
 }
 
-
 const CustomTabBarIcon = ({ name, color }: CustomTabBarIconProps) => (
   <Icon name={name} size={24} color={color} />
+);
+
+const CustomTabButton = ({ children, onPress }: any) => (
+  <TouchableOpacity
+    style={{
+      top: -20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...styles.shadow
+    }}
+    onPress={onPress}
+  >
+    <View
+      style={{
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        backgroundColor: '#fff'
+      }}
+    >
+      {children}
+    </View>
+  </TouchableOpacity>
 );
 
 const BottomTabNavigator = () => {
@@ -33,6 +53,7 @@ const BottomTabNavigator = () => {
         tabBarInactiveTintColor: theme.colors.gray550,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
+        headerShown: false,
         tabBarIcon: ({ color }) => {
           let iconName;
 
@@ -58,7 +79,6 @@ const BottomTabNavigator = () => {
 
           return <CustomTabBarIcon name={iconName} color={color} />;
         },
-        headerShown: false,
       })}
     >
       <Tab.Screen
@@ -74,7 +94,13 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Today"
         component={TodayScreen}
-        options={{ title: "Today" }}
+        options={{
+          title: "",
+          tabBarButton: (props) => <CustomTabButton {...props} />,
+          tabBarIcon: ({ color }) => (
+            <Icon name="calendar-today" color={color} size={40} />
+          ),
+        }}
       />
       <Tab.Screen
         name="CategoriesStack"
@@ -103,6 +129,16 @@ const styles = StyleSheet.create({
   tabBarLabel: {
     fontSize: 12,
     fontWeight: '600',
+  },
+  shadow: {
+    shadowColor: '#7F5DF0',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+    elevation: 5,
   },
 });
 

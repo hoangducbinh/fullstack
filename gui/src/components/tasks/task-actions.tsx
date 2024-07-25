@@ -38,6 +38,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
     date: todaysISODate.toISOString(),
     isCompleted: false,
     name: "",
+    description: "",
   })
 
   const { data, trigger } = useSWRMutation("tasks/create", createTaskRequest)
@@ -60,14 +61,9 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
     (_category) => _category._id === newTask.categoryId
   )
 
-  //console.log(`selectedCategory`, JSON.stringify(selectedCategory, null, 2))
-
   const onCreateTask = async () => {
     try {
       if (newTask.name.length.toString().trim().length > 0) {
-        /**
-         * mutation
-         */
         await trigger({
           ...newTask,
         })
@@ -76,6 +72,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
           isCompleted: false,
           date: todaysISODate.toISOString(),
           name: "",
+          description: "",
         })
         await mutate("tasks/")
       }
@@ -89,7 +86,6 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
 
-
   return (
     <Box>
       <Box
@@ -100,6 +96,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
         flexDirection="row"
         position="relative"
         style={{borderWidth:1, borderColor: "#f0abfc"}}
+        justifyContent="space-between"
       >
         <TextInput
           placeholder="Create a new task"
@@ -122,7 +119,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
           }}
           onSubmitEditing={onCreateTask}
         />
-        <Box flexDirection="row" alignItems="center" >
+        <Box flexDirection="row" alignItems="center">
           <Pressable
             onPress={() => {
               setIsSelectingDate((prev) => !prev)
@@ -165,7 +162,6 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                 mr="1"
                 style={{
                   borderColor: selectedCategory?.color.code,
-                
                 }}
               ></Box>
               <Text
@@ -229,31 +225,31 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
       )}
       {isSelectingDate && (
         <Box style={{paddingTop:20}}>
-           <View style={styles.calendarContainer}>
-          <Calendar
-            minDate={format(today, "y-MM-dd")}
-            theme={{
-              calendarBackground: 'white',
-              textSectionTitleColor: 'blue',
-              selectedDayBackgroundColor: 'blue',
-              selectedDayTextColor: 'white',
-              todayTextColor: 'blue',
-              dayTextColor: 'black',
-              dotColor: 'blue',
-              selectedDotColor: 'white',
-              arrowColor: 'blue',
-            }}
-            onDayPress={(day: { dateString: string | number | Date }) => {
-              setIsSelectingDate(false)
-              const selectedDate = new Date(day.dateString).toISOString()
-              setNewTask((prev) => {
-                return {
-                  ...prev,
-                  date: selectedDate,
-                }
-              })
-            }}
-          />
+          <View style={styles.calendarContainer}>
+            <Calendar
+              minDate={format(today, "y-MM-dd")}
+              theme={{
+                calendarBackground: 'white',
+                textSectionTitleColor: 'blue',
+                selectedDayBackgroundColor: 'blue',
+                selectedDayTextColor: 'white',
+                todayTextColor: 'blue',
+                dayTextColor: 'black',
+                dotColor: 'blue',
+                selectedDotColor: 'white',
+                arrowColor: 'blue',
+              }}
+              onDayPress={(day: { dateString: string | number | Date }) => {
+                setIsSelectingDate(false)
+                const selectedDate = new Date(day.dateString).toISOString()
+                setNewTask((prev) => {
+                  return {
+                    ...prev,
+                    date: selectedDate,
+                  }
+                })
+              }}
+            />
           </View>
         </Box>
       )}
@@ -267,7 +263,7 @@ const styles = StyleSheet.create({
   calendarContainer: {
     borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: 'white', // Thêm màu nền cố định
+    backgroundColor: 'white',
     elevation: 3,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },

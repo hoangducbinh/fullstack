@@ -69,6 +69,31 @@ const loginUser = async (request: Request, response: Response) => {
 }
 
 
+ const updateDeviceToken = async (req: Request, res: Response) => {
+    try {
+      const { userId, deviceToken } = req.body;
+      
+      // Tìm người dùng trong cơ sở dữ liệu
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // So sánh deviceToken mới với giá trị hiện tại
+      if (user.deviceToken !== deviceToken) {
+        // Cập nhật deviceToken nếu nó khác với giá trị hiện tại
+        user.deviceToken = deviceToken;
+        await user.save();
+      }
+  
+      res.json(user);
+    } catch (error) {
+      console.error('Error updating device token:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+
 
 const changePassword = async (request: Request, response: Response) => {
     try {
@@ -178,6 +203,6 @@ const forgotPassword = async (request: Request, response: Response) => {
 
 
 
-export { createUser,loginUser,changePassword,updateProfile,forgotPassword};
+export { createUser,loginUser,changePassword,updateProfile,forgotPassword,updateDeviceToken};
 
 

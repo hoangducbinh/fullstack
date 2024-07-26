@@ -44,6 +44,22 @@ export const registerUser = async ({
 
 type LoginUserTypes = Omit<IUser, "name">;
 
+// export const loginUser = async ({ email, password }: LoginUserTypes) => {
+//   try {
+//     const response = await axiosInstance.post("/users/login", {
+//       email,
+//       password,
+//     });
+//     const _token = response.data.token;
+//     axiosInstance.defaults.headers.common["Authorization"] = _token;
+//     saveToken(TOKEN_NAME, _token);
+//     return response.data.user;
+//   } catch (error) {
+//     console.log("error in loginUser", error);
+//     throw error;
+//   }
+// };
+
 export const loginUser = async ({ email, password }: LoginUserTypes) => {
   try {
     const response = await axiosInstance.post("/users/login", {
@@ -53,12 +69,24 @@ export const loginUser = async ({ email, password }: LoginUserTypes) => {
     const _token = response.data.token;
     axiosInstance.defaults.headers.common["Authorization"] = _token;
     saveToken(TOKEN_NAME, _token);
+
+    // Lấy deviceToken và cập nhật cho người dùng
+    const deviceToken = await messaging().getToken();
+    if (deviceToken) {
+      await axiosInstance.post("/users/update-device-token", {
+        userId: response.data.user.id,  // Giả sử bạn nhận user ID từ phản hồi
+        deviceToken,
+      });
+    }
+
     return response.data.user;
   } catch (error) {
     console.log("error in loginUser", error);
     throw error;
   }
 };
+
+
 
 export const removeToken = async () => {
   try {

@@ -2,8 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import axios from "axios"
 
 //export const BASE_URL = "http://localhost:4000/"
-//export const BASE_URL = "http://10.0.2.2:4000/"
-export const BASE_URL = "https://server-0tk5.onrender.com/"
+export const BASE_URL = "http://10.0.2.2:4000/"
+//export const BASE_URL = "https://server-0tk5.onrender.com/"
 
 
 const TIME_OUT = 30000

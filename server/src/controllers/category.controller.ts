@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Category from '../models/category-modal';
+import Category from '../models/category-model';
 import { ICategory } from '../types';
 import { AuthRequest } from '../middleware';
 

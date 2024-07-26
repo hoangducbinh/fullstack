@@ -3,6 +3,7 @@ export interface IUser {
     name: string
     password: string
     avatar: string
+    deviceToken: string
   }
   
   export interface IColor {
@@ -37,4 +38,5 @@ export interface IUser {
     createdAt: string
     updatedAt: string
     description: string
+    deviceToken: string;
   }

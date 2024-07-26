@@ -11,7 +11,7 @@ import nodemailer from "nodemailer";
 
 const createUser = async (request: Request, response: Response) => {
     try {
-        const { name, email, password,avatar} = request.body;
+        const { name, email, password,avatar,deviceToken} = request.body;
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -22,6 +22,7 @@ const createUser = async (request: Request, response: Response) => {
             name, 
             email, 
             avatar,
+            deviceToken ,
             password: hashedPassword });
             response.status(201).send({massage:"User created successfully"});
     } catch (error) {
@@ -101,7 +102,7 @@ const changePassword = async (request: Request, response: Response) => {
 
 const updateProfile = async (request: Request, response: Response) => {
     try {
-        const { email, newName, newAvatar } = request.body;
+        const { email, newName, newAvatar  } = request.body;
 
         // Tìm người dùng dựa trên email
         const existingUser = await User.findOne({ email });
@@ -111,7 +112,7 @@ const updateProfile = async (request: Request, response: Response) => {
         }
 
         // Cập nhật thông tin mới vào cơ sở dữ liệu
-        await User.updateOne({ _id: existingUser._id }, { name: newName, avatar: newAvatar });
+        await User.updateOne({ _id: existingUser._id }, { name: newName, avatar: newAvatar});
 
         response.status(200).send({ message: "Profile updated successfully" });
     } catch (error) {

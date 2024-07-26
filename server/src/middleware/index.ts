@@ -6,6 +6,7 @@ import User from "../models/user-model";
 
 export interface AuthRequest extends Request {
     user: string
+    userDeviceToken: string
 }
 
 export const authenticationMiddleware = async (

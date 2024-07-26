@@ -1,7 +1,7 @@
 import {Request, Response } from "express";
 import { AuthRequest } from "../middleware";
-import Task from "../models/task-modal";
 import { ITask } from "../types";
+import Task from "../models/task-model";
 
 
 
@@ -38,10 +38,6 @@ const getAllTasksunfinished= async (request: AuthRequest, response: Response) =>
   }
 }
 
-
-
-
-
 const createTask = async (request: AuthRequest, response: Response) => {
     try {
         const {name,date,categoryId,description}: ITask= request.body
@@ -51,7 +47,7 @@ const createTask = async (request: AuthRequest, response: Response) => {
                 date,
                 categoryId,
                 description,
-                user: request.user
+                user: request.user,
             }
         )
         response.status(200).send(task);
@@ -162,6 +158,8 @@ const editTask = async (request: AuthRequest, response: Response) => {
     }
   }
   
+
+
 
 
 export { 

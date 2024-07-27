@@ -71,10 +71,10 @@ const loginUser = async (request: Request, response: Response) => {
 
  const updateDeviceToken = async (req: Request, res: Response) => {
     try {
-      const { userId, deviceToken } = req.body;
+      const { email, deviceToken } = req.body;
       
       // Tìm người dùng trong cơ sở dữ liệu
-      const user = await User.findById(userId);
+      const user = await User.findOne(email);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }

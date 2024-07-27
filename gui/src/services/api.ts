@@ -26,7 +26,7 @@ export const registerUser = async ({
   email,
   name,
   password,
-  deviceToken, // Thêm deviceToken vào đây
+  deviceToken,
 }: RegisterUserTypes & { deviceToken: string }) => {
   try {
     const response = await axiosInstance.post("/users/create", {
@@ -62,21 +62,30 @@ type LoginUserTypes = Omit<IUser, "name">;
 
 export const loginUser = async ({ email, password }: LoginUserTypes) => {
   try {
+    console.log('Sending login request to /users/login with:', { email, password });
+
     const response = await axiosInstance.post("/users/login", {
       email,
       password,
     });
+
+    console.log('Login successful:', response.data);
+
     const _token = response.data.token;
     axiosInstance.defaults.headers.common["Authorization"] = _token;
     saveToken(TOKEN_NAME, _token);
 
-    // Lấy deviceToken và cập nhật cho người dùng
+    // Get deviceToken and update for the user
     const deviceToken = await messaging().getToken();
     if (deviceToken) {
+      console.log('Updating device token for user:', response.data.user.email, deviceToken);
+      
       await axiosInstance.post("/users/update-device-token", {
-        userId: response.data.user.id,  // Giả sử bạn nhận user ID từ phản hồi
+        user: response.data.user.email, 
         deviceToken,
       });
+
+      console.log('Device token updated successfully');
     }
 
     return response.data.user;
@@ -85,6 +94,7 @@ export const loginUser = async ({ email, password }: LoginUserTypes) => {
     throw error;
   }
 };
+
 
 
 

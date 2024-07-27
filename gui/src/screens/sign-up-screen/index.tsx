@@ -1,5 +1,5 @@
 import { Pressable, View, Alert, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Text } from '../../utils/theme';
 import { useNavigation } from '@react-navigation/native';
 import { AuthScreenNavigationType } from '../../navigation/types';
@@ -11,6 +11,26 @@ import { IUser } from '../../types';
 import { registerUser } from '../../services/api';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import messaging from '@react-native-firebase/messaging';
+
+
+export const useDeviceToken = () => {
+    const [deviceToken, setDeviceToken] = useState<string>('');
+  
+    useEffect(() => {
+      const requestUserPermission = async () => {
+        const authStatus = await messaging().requestPermission();
+        const token = await messaging().getToken();
+        console.log('FCM token:', token);
+        setDeviceToken(token);
+      };
+      requestUserPermission();
+    }, []);
+  
+    return deviceToken;
+  };
+
+
 
 const SignUpScreen = () => {
     const navigation = useNavigation<AuthScreenNavigationType<"SignUp">>();
@@ -42,20 +62,24 @@ const SignUpScreen = () => {
             confirmPassword: "",
         },
     });
+    
+    const deviceToken = useDeviceToken();
 
-    const onSubmit = async (data: IUser & { confirmPassword: string }) => {
+    const onSubmit = async (data:IUser & { confirmPassword: string}) => {
+       
         try {
+           
             const { email, name, password, confirmPassword } = data;
 
             if (password !== confirmPassword) {
                 Alert.alert('Lỗi', 'Mật khẩu không khớp. Vui lòng kiểm tra lại.');
                 return;
             }
-
             await registerUser({
                 email,
                 name,
                 password,
+                deviceToken,
             });
             Alert.alert(
                 'Thành công',
@@ -73,6 +97,9 @@ const SignUpScreen = () => {
             console.error(error);
         }
     };
+
+
+
 
     return (
         <SafeAreaWrapper>

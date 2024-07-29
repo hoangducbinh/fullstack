@@ -30,8 +30,8 @@ const CreateNewList = () => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
     padding:6,
   },
   container: {

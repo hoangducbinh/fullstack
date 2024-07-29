@@ -11,7 +11,7 @@ import nodemailer from "nodemailer";
 
 const createUser = async (request: Request, response: Response) => {
     try {
-        const { name, email, password,avatar} = request.body;
+        const { name, email, password,avatar,deviceToken} = request.body;
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -22,6 +22,7 @@ const createUser = async (request: Request, response: Response) => {
             name, 
             email, 
             avatar,
+            deviceToken ,
             password: hashedPassword });
             response.status(201).send({massage:"User created successfully"});
     } catch (error) {
@@ -68,6 +69,31 @@ const loginUser = async (request: Request, response: Response) => {
 }
 
 
+ const updateDeviceToken = async (req: Request, res: Response) => {
+    try {
+      const { email, deviceToken } = req.body;
+      
+      // Tìm người dùng trong cơ sở dữ liệu
+      const user = await User.findOne(email);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // So sánh deviceToken mới với giá trị hiện tại
+      if (user.deviceToken !== deviceToken) {
+        // Cập nhật deviceToken nếu nó khác với giá trị hiện tại
+        user.deviceToken = deviceToken;
+        await user.save();
+      }
+  
+      res.json(user);
+    } catch (error) {
+      console.error('Error updating device token:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+
 
 const changePassword = async (request: Request, response: Response) => {
     try {
@@ -101,7 +127,7 @@ const changePassword = async (request: Request, response: Response) => {
 
 const updateProfile = async (request: Request, response: Response) => {
     try {
-        const { email, newName, newAvatar } = request.body;
+        const { email, newName, newAvatar  } = request.body;
 
         // Tìm người dùng dựa trên email
         const existingUser = await User.findOne({ email });
@@ -111,7 +137,7 @@ const updateProfile = async (request: Request, response: Response) => {
         }
 
         // Cập nhật thông tin mới vào cơ sở dữ liệu
-        await User.updateOne({ _id: existingUser._id }, { name: newName, avatar: newAvatar });
+        await User.updateOne({ _id: existingUser._id }, { name: newName, avatar: newAvatar});
 
         response.status(200).send({ message: "Profile updated successfully" });
     } catch (error) {
@@ -177,6 +203,6 @@ const forgotPassword = async (request: Request, response: Response) => {
 
 
 
-export { createUser,loginUser,changePassword,updateProfile,forgotPassword};
+export { createUser,loginUser,changePassword,updateProfile,forgotPassword,updateDeviceToken};
 
 

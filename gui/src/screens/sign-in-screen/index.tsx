@@ -33,7 +33,7 @@ const SignInScreen = () => {
     },
   })
 
-  const onSubmit = async (data: Omit<IUser, "name">) => {
+  const onSubmit = async (data: Omit<IUser, "name"| "deviceToken">) => {
     try {
       const { email, password } = data
       const _user = await loginUser({

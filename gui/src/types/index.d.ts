@@ -2,6 +2,7 @@ interface IUser {
   email: string
   name: string
   password: string
+  deviceToken?: string
 }
 
 interface IAuthenticatedUser {
@@ -44,6 +45,7 @@ interface ITask {
   categoryId: string
   createdAt: string
   date: string
+  description: string
 }
 
 interface ITaskRequest {

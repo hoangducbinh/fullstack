@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     borderColor: "#d946e9",
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 10,
+    marginBottom: 5,
     width: '100%',
   },
   dateCategoryContainer: {
@@ -235,10 +235,11 @@ const styles = StyleSheet.create({
     width: '49%',
     height: 45,
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   datePickerText: {
     color: '#a1a1a1',
+    fontSize: 14,
   },
   dropdown: {
     height: 45,
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     color: '#A1A1A1',
-    fontSize: 16,
+    fontSize: 14,
   },
   selectedTextStyle: {
     color: '#000',

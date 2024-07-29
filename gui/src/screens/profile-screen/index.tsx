@@ -159,7 +159,7 @@ const ProfileScreen = () => {
         <Pressable>
           <Image
             source={{ uri: "https://picsum.photos/200" }}
-            style={[styles.avatar, { alignSelf: 'center' }]}
+            style={[styles.avatar, { alignSelf: 'center', marginBottom: 15 }]}
           />
         </Pressable>
         <Text style={[styles.title, { textAlign: 'center', marginBottom: 20 }]}>
@@ -286,6 +286,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    
   },
   title: {
     fontSize: 24,
@@ -326,9 +327,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     fontSize: 20,
-    width: 170,
-    height: 60,
+    width: 165,
+    height: 55,
     textAlign: 'center',
+    textAlignVertical: 'center',
   },
   selectImageButton: {
     backgroundColor: '#EB91FF',

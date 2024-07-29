@@ -74,7 +74,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
           styles.taskContainer,
           {
             backgroundColor: task.isCompleted ? "#fbcfe8" : "#ffffff",
-            borderColor: task.isCompleted ? "#f9a8d4" : "#38bdf8",
+            borderColor: task.isCompleted ? "#f9a8d4" : "#f9a8d4",
           },
         ]}
       >
@@ -95,7 +95,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
               style={[
                 styles.taskText,
                 {
-                  color: task.isCompleted ? "#4caf50" : "#0284c7",
+                  color: task.isCompleted ? "#6d0073" : "#000000",
                   // textDecorationLine: task.isCompleted ? "line-through" : "none",
                   textDecorationLine: task.isCompleted ? "none" : "none",
                 },
@@ -163,6 +163,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 12,
     elevation: 1,
+    borderWidth: 1,
+    borderColor: "#f9a8d4",
   },
   taskTextContainer: {
     flex: 1,

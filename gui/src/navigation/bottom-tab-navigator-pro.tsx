@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "@shopify/restyle";
 import { View, TouchableOpacity, StyleSheet, Text, Platform } from "react-native";
@@ -9,8 +9,10 @@ import CompletedScreen from "../screens/completed-screen";
 import TodayScreen from "../screens/today-screen";
 import TaskCalendarScreen from "../screens/task-calendar";
 import theme from '../utils/theme';
+import TaskActions from "../components/tasks/task-actions-pro";
 
 const Tab = createBottomTabNavigator();
+
 
 interface CustomTabBarIconProps {
   name: string;
@@ -47,12 +49,18 @@ const CustomTabButton = ({ children, onPress }: any) => (
 
 const BottomTabNavigator = () => {
   const theme = useTheme();
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handlePlusPress = () => {
+    setModalVisible(true); // Mở modal khi nhấn nút +
+  };
 
   return (
+    <>
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: theme.colors.pink500,
-        tabBarInactiveTintColor: theme.colors.purple900,
+        tabBarInactiveTintColor: theme.colors.pink300,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
         headerShown: false,
@@ -92,35 +100,39 @@ const BottomTabNavigator = () => {
         options={{ title: "Hoàn thành" }}
       />
       <Tab.Screen
-        name="Today"
-        component={TodayScreen}
-        options={{
-          title: "",
-         // tabBarButton: (props) => <CustomTabButton {...props}/>,
-          // tabBarIcon: ({ color }) => (
-          //   <Icon name="calendar-today" color={color} size={40} />
-          // ),
-          tabBarIcon: ({ color }) => {
-            return (
-              <View style={{
-                width: Platform.OS === "ios" ? 50 : 60,
-                height: Platform.OS === "ios" ? 50 : 60,
-                top: Platform.OS === "ios"? -10 : -10,
-                borderRadius: Platform.OS === "ios"? 25: 30,
-                backgroundColor:theme.colors.pink500,
-                alignItems: "center",
-                justifyContent: 'center',
-                }}>
-                <Icon
-                  name="calendar-today"
-                  color={'#ffff'}
-                  size={40}
-                />
-              </View>
-            );
-          }
-        }}
-      />
+          name="Today"
+          component={TodayScreen}
+          options={{
+            title: "",
+            tabBarButton: (props) => (
+              <TouchableOpacity
+                style={{
+                  alignItems: "center",
+                  justifyContent: 'center',
+                }}
+                onPress={handlePlusPress}
+              >
+                <View
+                  style={{
+                    width: Platform.OS === "ios" ? 50 : 60,
+                    height: Platform.OS === "ios" ? 50 : 60,
+                    top: Platform.OS === "ios"? -10 : -20,
+                    borderRadius: Platform.OS === "ios"? 25: 30,
+                    backgroundColor:theme.colors.pink500,
+                    alignItems: "center",
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon
+                    name="plus"
+                    color={'#ffff'}
+                    size={40}
+                  />
+                </View>
+              </TouchableOpacity>
+            ),
+          }}
+        />
       <Tab.Screen
         name="CategoriesStack"
         component={CategoriesStackNavigator}
@@ -132,6 +144,13 @@ const BottomTabNavigator = () => {
         options={{ title: "Lịch trình" }}
       />
     </Tab.Navigator>
+    {/* Modal thêm Task */}
+    <TaskActions
+    categoryId=""
+    isModalVisible={isModalVisible}
+    setModalVisible={setModalVisible}
+  />
+  </>
   );
 };
 

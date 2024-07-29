@@ -69,7 +69,7 @@ const CategoryScreen = () => {
           renderItem={({ item }) => (
             <Task task={item} mutateTasks={mutateTasks} />
           )}
-          ItemSeparatorComponent={() => <Box height={14} />}
+          ItemSeparatorComponent={() => <Box height={0} />}
         />
       </Box>
     </SafeAreaWrapper>

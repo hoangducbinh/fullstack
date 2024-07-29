@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { getGreeting } from "../../utils/helpers";
 import useUserGlobalStore from "../../store/useUserGlobalStore";
 import { ITask } from "../../types";
-import { fetcher} from "../../services/config";
+import { fetcher } from "../../services/config";
 import Loader from "../../components/shared/loader";
 import SafeAreaWrapper from "../../components/shared/safe-area-wrapper";
 import { AnimatedText, Box, Text } from "../../utils/theme";
@@ -26,8 +26,9 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [currentFilter, setCurrentFilter] = useState('Tất cả'); // State for filter
 
-   const {
+  const {
     data: tasks,
     isLoading,
     mutate: mutateTasks,
@@ -37,58 +38,76 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
 
   useEffect(() => {
     if (tasks) {
-      setFilteredTasks(tasks.filter(task => task.name.toLowerCase().includes(searchQuery.toLowerCase())));
+      let filtered = tasks.filter(task => task.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      switch (currentFilter) {
+        case 'Hôm nay':
+          filtered = filtered.filter(task => format(new Date(task.date), "yyyy-MM-dd") === format(today, "yyyy-MM-dd"));
+          break;
+        case 'Ngày mai':
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+          filtered = filtered.filter(task => format(new Date(task.date), "yyyy-MM-dd") === format(tomorrow, "yyyy-MM-dd"));
+          break;
+      }
+
+      setFilteredTasks(filtered);
     }
-  }, [tasks, searchQuery]);
+  }, [tasks, searchQuery, currentFilter]);
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
   };
-   // Đếm số lượng task chưa hoàn thành
+
+  const handleFilterPress = (filter: string) => {
+    setCurrentFilter(filter);
+  };
+
+  // Đếm số lượng task chưa hoàn thành
   const pendingTasksCount = tasks?.filter(task => !task.isCompleted).length ?? 0;
 
   const defaultAvatar = "https://picsum.photos/200";
   if (isLoading || !tasks) {
     return <Loader />;
   }
-   // Sắp xếp các task
-   const sortedTasks = filteredTasks
-   .slice()
-   .sort((a, b) => {
-     const dueDateA = new Date(a.date);
-     const dueDateB = new Date(b.date);
+  // Sắp xếp các task
+  const sortedTasks = filteredTasks
+    .slice()
+    .sort((a, b) => {
+      const dueDateA = new Date(a.date);
+      const dueDateB = new Date(b.date);
 
-     // Đưa các task chưa hoàn thành lên đầu
-     if (a.isCompleted !== b.isCompleted) {
-       return a.isCompleted ? 1 : -1;
-     }
-      
-     // Sắp xếp các task chưa hoàn thành theo ngày đến hạn gần nhất
-     // và các task đã hoàn thành theo ngày đến hạn xa nhất
-     return a.isCompleted
-       ? dueDateB.getTime() - dueDateA.getTime() // Task đã hoàn thành: ngày đến hạn xa nhất
-       : dueDateA.getTime() - dueDateB.getTime(); // Task chưa hoàn thành: ngày đến hạn gần nhất
-   })
-   .slice(0, 15); 
+      // Đưa các task chưa hoàn thành lên đầu
+      if (a.isCompleted !== b.isCompleted) {
+        return a.isCompleted ? 1 : -1;
+      }
+
+      // Sắp xếp các task chưa hoàn thành theo ngày đến hạn gần nhất
+      // và các task đã hoàn thành theo ngày đến hạn xa nhất
+      return a.isCompleted
+        ? dueDateB.getTime() - dueDateA.getTime() // Task đã hoàn thành: ngày đến hạn xa nhất
+        : dueDateA.getTime() - dueDateB.getTime(); // Task chưa hoàn thành: ngày đến hạn gần nhất
+    })
+    .slice(0, 15);
 
   return (
     <SafeAreaWrapper>
       <Box flex={1} mx="4" mt="4">
-       {/* Header */}
-       <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
+        {/* Header */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
           <View style={styles.header}>
-          <Pressable onPress={() => navigation.navigate('Profile')}>
-          <Image
-              source={{ uri: user?.avatar || defaultAvatar }} 
-              style={styles.avatar}
-            />
-          </Pressable>
+            <Pressable onPress={() => navigation.navigate('Profile')}>
+              <Image
+                source={{ uri: user?.avatar || defaultAvatar }}
+                style={styles.avatar}
+              />
+            </Pressable>
             <View style={styles.headerTextContainer}>
               <AnimatedText
                 variant="textXl"
                 fontWeight="600"
                 entering={ZoomInEasyDown.delay(500).duration(700)}
-                style={{ color: colors.primary }}
+                style={{ color: colors.gray900 }}
               >
                 Xin chào {greeting},
                 <Text style={{ color: colors.fuchsia500 }}> {user?.name}</Text>
@@ -102,29 +121,78 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
 
         {/* Task Count */}
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
-            <Text style={{ fontSize: 16, fontWeight: 'bold', color: colors.blu400 }}>
-               Hôm nay có {pendingTasksCount} công việc cần hoàn thành 👍
-            </Text>
+          <Text style={{ fontSize: 17, fontWeight: 'bold', color: colors.blu400 }}>
+            Hôm nay có {pendingTasksCount} công việc cần hoàn thành 👍
+          </Text>
         </Box>
         <Box width="100%" paddingVertical="1">
-            <View style={styles.searchContainer}>
-              <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Tìm kiếm..."
-                placeholderTextColor="#888"
-                value={searchQuery}
-                onChangeText={handleSearchChange}
-              />
-            </View>
-          </Box>
+          <View style={styles.searchContainer}>
+            <Icon name="search" size={20} color="#f472b6" style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Tìm kiếm..."
+              placeholderTextColor="#888"
+              value={searchQuery}
+              onChangeText={handleSearchChange}
+            />
+          </View>
+        </Box>
 
-        <Box height={10} />
+        <View
+          style={{
+            marginHorizontal: 2,
+            marginVertical: 5,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 5,
+          }}
+        >
+          <Pressable
+            style={{
+              backgroundColor: currentFilter === 'Tất cả' ? "#d946e9" : "#e884f5",
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => handleFilterPress('Tất cả')}
+          >
+            <Text style={{ color: "white", textAlign: "center" }}>Tất cả</Text>
+          </Pressable>
+          <Pressable
+            style={{
+              backgroundColor: currentFilter === 'Hôm nay' ? "#d946e9" : "#e884f5",
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => handleFilterPress('Hôm nay')}
+          >
+            <Text style={{ color: "white", textAlign: "center" }}>Hôm nay</Text>
+          </Pressable>
+          <Pressable
+            style={{
+              backgroundColor: currentFilter === 'Ngày mai' ? "#d946e9" : "#e884f5",
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => handleFilterPress('Ngày mai')}
+          >
+            <Text style={{ color: "white", textAlign: "center" }}>Ngày mai</Text>
+          </Pressable>
+        </View>
+        <Box height={5} />
         {tasks.length > 0 ? (
           <FlatList
             data={sortedTasks}
             renderItem={({ item }) => <Task task={item} mutateTasks={mutateTasks} />}
-            ItemSeparatorComponent={() => <Box height={14} />}
+            ItemSeparatorComponent={() => <Box height={0} />}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item._id}
           />
@@ -146,17 +214,17 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
         />
       </Box>
 
-      <Pressable
+      {/* <Pressable
         onPress={() => setModalVisible(!isModalVisible)}
         style={styles.overlayButton}
       >
         <LinearGradient
-          colors={['#f472b6','#ec4899']}
+          colors={['#f472b6', '#ec4899']}
           style={styles.circleButton}
         >
           <Text style={styles.plusText}>+</Text>
         </LinearGradient>
-      </Pressable>
+      </Pressable> */}
     </SafeAreaWrapper>
   );
 };
@@ -207,13 +275,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
-  overlayButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    margin: 10,
-    zIndex: 0,
-  },
+  // overlayButton: {
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   right: 0,
+  //   margin: 10,
+  //   zIndex: 0,
+  // },
   circleButton: {
     width: 66,
     height: 66,

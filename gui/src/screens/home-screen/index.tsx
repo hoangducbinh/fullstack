@@ -108,9 +108,11 @@ const pendingTasksCount = tasks?.filter(task => {
 
 
   const defaultAvatar = "https://picsum.photos/200";
+
   if (isLoading || !tasks) {
     return <Loader />;
   }
+
   // Sắp xếp các task
   const sortedTasks = filteredTasks
     .slice()
@@ -133,7 +135,9 @@ const pendingTasksCount = tasks?.filter(task => {
 
   return (
     <SafeAreaWrapper>
+      
       <Box flex={1} mx="4" mt="4">
+        
         {/* Header */}
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
           <View style={styles.header}>

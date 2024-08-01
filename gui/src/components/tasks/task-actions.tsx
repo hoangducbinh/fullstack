@@ -39,7 +39,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
     isCompleted: false,
     name: "",
     description: "",
-    userDeviceToken: "",
+
   })
 
   const { data, trigger } = useSWRMutation("tasks/create", createTaskRequest)
@@ -74,7 +74,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
           date: todaysISODate.toISOString(),
           name: "",
           description: "",
-          userDeviceToken: "",
+         
         })
         await mutate("tasks/")
       }

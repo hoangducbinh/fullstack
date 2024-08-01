@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
 import useSWR from "swr";
 import { ICategory } from "../../types";
@@ -12,7 +12,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const CategoriesScreen = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-
   const { data, isLoading } = useSWR<ICategory[]>(
     "categories/",
     fetcher,
@@ -30,12 +29,10 @@ const CategoriesScreen = () => {
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
-  // Lọc danh mục theo từ khóa tìm kiếm
-  const filteredData = useMemo(() => {
-    return sortedData?.filter((category) =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [sortedData, searchQuery]);
+  // Lọc danh mục dựa trên truy vấn tìm kiếm
+  const filteredData = sortedData?.filter(category =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderItem = ({ item }: { item: ICategory }) => (
     <Category category={item} />

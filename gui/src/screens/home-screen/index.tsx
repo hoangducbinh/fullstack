@@ -163,7 +163,8 @@ const pendingTasksCount = tasks?.filter(task => {
         {/* Task Count */}
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" mb="4">
           <Text style={{ fontSize: 17, fontWeight: 'bold', color: colors.blu400 }}>
-            Hôm nay có {pendingTasksCount} công việc cần hoàn thành 👍
+            {pendingTasksCount > 0 ? `Có ${pendingTasksCount} việc cần làm 🎉` : 
+            "Cố gắng mỗi ngày nha 🎉"}
           </Text>
         </Box>
         <Box width="100%" paddingVertical="1">
@@ -241,6 +242,7 @@ const pendingTasksCount = tasks?.filter(task => {
             <Text style={{ color: "white", textAlign: "center" }}>Quá hạn</Text>
           </Pressable>
         </View>
+        
         <Box height={5} />
         {tasks.length > 0 ? (
          <FlatList

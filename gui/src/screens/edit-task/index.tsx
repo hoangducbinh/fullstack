@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, FlatList, Modal, Pressable, ScrollView, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { useTheme } from "@shopify/restyle";
-import { isToday, format } from "date-fns";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
@@ -18,6 +17,7 @@ import Input from "../../components/shared/input";
 import { Dropdown } from "react-native-element-dropdown";
 import NavigateBack from "../../components/shared/navigate-back";
 import { today } from "../../components/tasks/task-actions-pro";
+import { isToday, format, isAfter, endOfDay } from "date-fns";
 
 type EditTaskRouteType = RouteProp<HomeStackParamList, "EditTask">;
 
@@ -50,6 +50,7 @@ const EditTaskScreen = () => {
   const [isSelectingCategory, setIsSelectingCategory] = useState<boolean>(false);
   const [isSelectingDate, setIsSelectingDate] = useState<boolean>(false);
   const [contentHeight, setContentHeight] = useState(150);
+  
   const { data: categories, isLoading } = useSWR<ICategory[]>(
     "categories",
     fetcher
@@ -143,6 +144,42 @@ const EditTaskScreen = () => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
 
+  
+  const [timeLeft, setTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const deadline = new Date(task.date);
+      
+      // Set deadline to end of the day
+      const endOfDeadline = endOfDay(deadline);
+      
+      if (isAfter(now, endOfDeadline)) {
+        setTimeLeft("Đã hết hạn");
+        return;
+      }
+
+      const difference = endOfDeadline.getTime() - now.getTime();
+      const days = Math.floor(difference / (24 * 60 * 60 * 1000));
+      const hours = Math.floor((difference % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      const minutes = Math.floor((difference % (60 * 60 * 1000)) / (60 * 1000));
+      const seconds = Math.floor((difference % (60 * 1000)) / 1000);
+
+      setTimeLeft(
+        `${days} ngày ${hours} giờ ${minutes} phút`
+      );
+    };
+
+    calculateTimeLeft(); // Initial calculation
+
+    const interval = setInterval(calculateTimeLeft, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [task.date]);
+
+
+
   return (
     <SafeAreaWrapper>
       <Box flex={1} mx="4">
@@ -215,6 +252,7 @@ const EditTaskScreen = () => {
           <Text style={styles.statusText}>
             {task.isCompleted ? "Nhiệm vụ đã hoàn thành" : "Nhiệm vụ chưa hoàn thành"}
           </Text>
+          <Text style={styles.timeLeftText}>{timeLeft}</Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', bottom: -8, }}>
           <Text variant="textSm">Ngày</Text>
@@ -419,5 +457,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     fontWeight: 'bold'
+  },
+  timeLeftText: {
+    fontSize: 12,
+    color: "#f472b6",
+    marginTop: 4,
   },
 });

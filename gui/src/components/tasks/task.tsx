@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Alert, View, Text, Pressable, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import useSWRMutation from "swr/mutation";
@@ -6,7 +7,7 @@ import axiosInstance, { fetcher } from "../../services/config";
 import { HomeScreenNavigationType } from "../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
 import { Box } from "../../utils/theme";
-import { isToday, format } from "date-fns";
+import { isToday, format, isAfter, endOfDay } from "date-fns";
 import useSWR from "swr";
 
 type TaskProps = {
@@ -31,9 +32,47 @@ const toggleTaskStatusRequest = async (
   }
 };
 
+
 const Task = ({ task, mutateTasks }: TaskProps) => {
   const { trigger } = useSWRMutation("tasks/update", toggleTaskStatusRequest);
   const navigation = useNavigation<HomeScreenNavigationType>();
+
+  const [timeLeft, setTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const deadline = new Date(task.date);
+      
+      // Set deadline to end of the day
+      const endOfDeadline = endOfDay(deadline);
+      
+      if (isAfter(now, endOfDeadline)) {
+        setTimeLeft("Đã hết hạn");
+        return;
+      }
+
+      const difference = endOfDeadline.getTime() - now.getTime();
+      const days = Math.floor(difference / (24 * 60 * 60 * 1000));
+      const hours = Math.floor((difference % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      const minutes = Math.floor((difference % (60 * 60 * 1000)) / (60 * 1000));
+      const seconds = Math.floor((difference % (60 * 1000)) / 1000);
+
+      setTimeLeft(
+        `${days} ngày ${hours} giờ ${minutes} phút`
+      );
+    };
+
+    calculateTimeLeft(); // Initial calculation
+
+    const interval = setInterval(calculateTimeLeft, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [task.date]);
+
+
+  
+
 
   const toggleTaskStatus = () => {
     if (task.isCompleted) {
@@ -137,10 +176,12 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
                 {truncateText(selectedCategory.name, 20)}
               </Text>
             )}
+            <Text style={styles.timeLeftText}>{timeLeft}</Text>
           </Pressable>
+
         </View>
         <View style={styles.dateContainer}>
-          <Box 
+          <Box
             bg="neutral100"
             p="2"
             borderRadius="rounded-xl"
@@ -149,6 +190,7 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
             <Text style={styles.dateText}>
               {isToday(new Date(task.date)) ? "Today" : format(new Date(task.date), "MMM dd")}
             </Text>
+
           </Box>
         </View>
         <Pressable onPress={navigateToEditTask} style={styles.editButton}>
@@ -209,10 +251,16 @@ const styles = StyleSheet.create({
   },
   dateContainer: {
     marginRight: 12,
+    alignItems: 'center',
   },
   dateText: {
     fontSize: 14,
     color: "#888888",
+  },
+  timeLeftText: {
+    fontSize: 12,
+    color: "#f472b6",
+    marginTop: 4,
   },
   editButton: {
     padding: 8,

@@ -1,7 +1,7 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "@shopify/restyle";
 import React, { useState } from "react";
-import { Pressable, TextInput, ScrollView } from "react-native";
+import { Pressable, TextInput, ScrollView, Alert } from "react-native";
 import { useSWRConfig } from "swr";
 
 import useSWRMutation from "swr/mutation";
@@ -94,7 +94,7 @@ const CreateCategoryScreen = () => {
   console.log(`route.params`, JSON.stringify(route.params, null, 2));
 
   const [newCategory, setNewCategory] = useState<
-    Omit<ICategory, "_id" | "user" | "isEditable">
+    Omit<ICategory, "_id" | "user" | "isEditable" |"createdAt"|"updatedAt">
   >({
     name: route.params.category?.name ?? "",
     color: route.params.category?.color ?? DEFAULT_COLOR,
@@ -102,27 +102,44 @@ const CreateCategoryScreen = () => {
   });
 
   const createNewCategory = async () => {
-    try {
-      if (isEditing) {
-        const updatedCategoryItem = {
-          ...route.params.category,
-          ...newCategory,
-        };
-        await updateTrigger({
-          ...updatedCategoryItem,
-        });
-      } else {
-        await trigger({
-          ...newCategory,
-        });
-      }
-      await mutate(BASE_URL + "categories");
-      navigation.goBack();
-    } catch (error) {
-      console.log("error in createNewCategory", error);
-      throw error;
-    }
+    Alert.alert(
+      "Xác nhận",
+      isEditing ? "Bạn có muốn cập nhật danh mục này không?" : "Bạn có muốn tạo danh mục mới không?",
+      [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Xác nhận",
+          onPress: async () => {
+            try {
+              if (isEditing) {
+                const updatedCategoryItem = {
+                  ...route.params.category,
+                  ...newCategory,
+                };
+                await updateTrigger({
+                  ...updatedCategoryItem,
+                });
+              } else {
+                await trigger({
+                  ...newCategory,
+                });
+              }
+              await mutate(BASE_URL + "categories");
+              navigation.goBack();
+              Alert.alert("Thành công", isEditing ? "Danh mục đã được cập nhật." : "Danh mục mới đã được tạo.");
+            } catch (error) {
+              console.log("error in createNewCategory", error);
+              Alert.alert("Lỗi", "Đã xảy ra lỗi khi tạo hoặc cập nhật danh mục. Vui lòng thử lại.");
+            }
+          },
+        },
+      ]
+    );
   };
+  
 
   const updateColor = (color: IColor) => {
     setNewCategory((prev) => {
@@ -143,18 +160,36 @@ const CreateCategoryScreen = () => {
   };
 
   const deleteCategory = async () => {
-    try {
-      if (isEditing && route.params.category?._id)
-        await deleteTrigger({
-          id: route.params.category?._id,
-        });
-      await mutate(BASE_URL + "categories");
-      navigation.goBack();
-    } catch (error) {
-      console.log("error in deleteCategory", error);
-      throw error;
-    }
+    Alert.alert(
+      "Xác nhận xóa",
+      "Bạn có chắc chắn muốn xóa danh mục này không?",
+      [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Xóa",
+          onPress: async () => {
+            try {
+              if (isEditing && route.params.category?._id) {
+                await deleteTrigger({
+                  id: route.params.category?._id,
+                });
+              }
+              await mutate(BASE_URL + "categories");
+              navigation.goBack();
+              Alert.alert("Thành công", "Danh mục đã được xóa.");
+            } catch (error) {
+              console.log("error in deleteCategory", error);
+              Alert.alert("Lỗi", "Đã xảy ra lỗi khi xóa danh mục. Vui lòng thử lại.");
+            }
+          },
+        },
+      ]
+    );
   };
+  
 
   return (
     <SafeAreaWrapper>
@@ -299,7 +334,9 @@ const CreateCategoryScreen = () => {
             label={isEditing ? "Edit category" : "Create new Category"}
             onPress={createNewCategory}
           />
+            <Box height={16} />
         </Box>
+        
       </Box>
     </SafeAreaWrapper>
   );

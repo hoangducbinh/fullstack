@@ -1,4 +1,3 @@
-
 import { useNavigation } from "@react-navigation/native"
 import React from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -15,18 +14,13 @@ import Animated, { ZoomIn } from "react-native-reanimated"
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthScreenNavigationType<"SignIn">>()
-  
+
   const navigationToSignUpScreen = () => {
     navigation.navigate('SignUp')
-
-}
+  }
 
   const { updateUser } = useUserGlobalStore()
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Omit<IUser, "name">>({
+  const { control, handleSubmit, formState: { errors } } = useForm<Omit<IUser, "name">>({
     defaultValues: {
       email: "",
       password: "",
@@ -50,21 +44,25 @@ const SignInScreen = () => {
 
   const navigationToForgotPassScreen = () => {
     navigation.navigate('ForgotPass')
+  }
 
-}
   return (
     <SafeAreaWrapper>
-      <Box flex={1} px="5.5" justifyContent='center'>
-            <Animated.View entering={ZoomIn.duration(2000)}>
-            <Image
-                    source={require('../../image/logo.png')}
-                    style={{alignSelf:'center', height: 110, width:120}}
-              />
-              </Animated.View>
+      <Box flex={1} px="5.5" justifyContent="center">
+        <Animated.View entering={ZoomIn.duration(2000)}>
+          <Image
+            source={require('../../image/logo.png')}
+            style={{ alignSelf: 'center', height: 110, width: 120 }}
+          />
+        </Animated.View>
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: "Email không được bỏ trống",
+            pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: "Email không đúng định dạng",
+            },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
@@ -73,16 +71,20 @@ const SignInScreen = () => {
               onChangeText={onChange}
               value={value}
               placeholder="Email"
-              error={errors.email}
             />
           )}
           name="email"
         />
+        {errors.email && (
+          <Text color="red500" textAlign="left">
+            {errors.email.message}
+          </Text>
+        )}
         <Box mb="6" />
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: "Mật khẩu không được bỏ trống",
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
@@ -91,28 +93,31 @@ const SignInScreen = () => {
               onChangeText={onChange}
               value={value}
               placeholder="Password"
-              error={errors.password}
               secureTextEntry
             />
           )}
           name="password"
         />
+        {errors.password && (
+          <Text color="red500" textAlign="left">
+            {errors.password.message}
+          </Text>
+        )}
         <Box mt="5.5" />
-                <Pressable onPress={navigationToForgotPassScreen}>
-                    <Text color="purple1000" textAlign="right">
-                        Quên mật khẩu?
-                    </Text>
-                </Pressable>
-                <Box mb="5.5" />
-                <Button label='Đăng nhập' onPress={handleSubmit(onSubmit)} uppercase />
-                <Box mb="5.5" />
-                <Pressable onPress={navigationToSignUpScreen}>
-                    <Text color="purple1000" textAlign="center">
-                        Đăng ký tài khoản
-                    </Text>
-                </Pressable>
-                <Box mt="5.5" />
-       
+        <Pressable onPress={navigationToForgotPassScreen}>
+          <Text color="purple1000" textAlign="right">
+            Quên mật khẩu?
+          </Text>
+        </Pressable>
+        <Box mb="5.5" />
+        <Button label="Đăng nhập" onPress={handleSubmit(onSubmit)} uppercase />
+        <Box mb="5.5" />
+        <Pressable onPress={navigationToSignUpScreen}>
+          <Text color="purple1000" textAlign="center">
+            Đăng ký tài khoản
+          </Text>
+        </Pressable>
+        <Box mt="5.5" />
       </Box>
     </SafeAreaWrapper>
   )

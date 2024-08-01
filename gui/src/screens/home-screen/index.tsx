@@ -13,6 +13,7 @@ import Task from "../../components/tasks/task";
 import { format } from "date-fns-tz";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
+import { useRoute } from '@react-navigation/native';
 
 const today = new Date();
 const greeting = getGreeting({ hour: new Date().getHours() });
@@ -22,11 +23,14 @@ import { colors } from "../../utils/theme/colors";
 import TaskActions from "../../components/tasks/task-actions-pro";
 
 const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
+  const route = useRoute();
+  const initialFilter = (route.params as { filter?: string })?.filter || 'Hôm nay';
   const { user } = useUserGlobalStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [currentFilter, setCurrentFilter] = useState('Tất cả'); // State for filter
+  const [currentFilter, setCurrentFilter] = useState(initialFilter);
+
 
   const {
     data: tasks,
@@ -38,33 +42,70 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
 
   useEffect(() => {
     if (tasks) {
-      let filtered = tasks.filter(task => task.name.toLowerCase().includes(searchQuery.toLowerCase()));
-
+      const todayDate = new Date();
+      const yesterdayDate = new Date(todayDate);
+      yesterdayDate.setDate(todayDate.getDate() - 1);
+  
+      // Tính toán trạng thái quá hạn cho mỗi công việc
+      const updatedTasks = tasks.map(task => {
+        const dueDate = new Date(task.date);
+        return {
+          ...task,
+          isOverdue: dueDate < yesterdayDate && !task.isCompleted
+        };
+      });
+  
+      // Lọc theo từ khóa tìm kiếm
+      let filtered = updatedTasks.filter(task => task.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  
+      // Áp dụng bộ lọc theo ngày
       switch (currentFilter) {
         case 'Hôm nay':
-          filtered = filtered.filter(task => format(new Date(task.date), "yyyy-MM-dd") === format(today, "yyyy-MM-dd"));
+          filtered = filtered.filter(task => format(new Date(task.date), "yyyy-MM-dd") === format(todayDate, "yyyy-MM-dd"));
           break;
         case 'Ngày mai':
-          const tomorrow = new Date(today);
-          tomorrow.setDate(today.getDate() + 1);
+          const tomorrow = new Date(todayDate);
+          tomorrow.setDate(todayDate.getDate() + 1);
           filtered = filtered.filter(task => format(new Date(task.date), "yyyy-MM-dd") === format(tomorrow, "yyyy-MM-dd"));
           break;
+        case 'Quá hạn':
+          // Chỉ bao gồm các công việc quá hạn
+          filtered = filtered.filter(task => task.isOverdue);
+          break;
+        case 'Tất cả':
+          // Loại bỏ các công việc quá hạn
+          filtered = filtered.filter(task => !task.isOverdue);
+          break;
       }
-
+  
       setFilteredTasks(filtered);
     }
   }, [tasks, searchQuery, currentFilter]);
+  
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
   };
 
-  const handleFilterPress = (filter: string) => {
+ const handleFilterPress = (filter: string) => {
     setCurrentFilter(filter);
   };
 
-  // Đếm số lượng task chưa hoàn thành
-  const pendingTasksCount = tasks?.filter(task => !task.isCompleted).length ?? 0;
+ // Get the start and end of today
+const startOfDay = new Date();
+startOfDay.setHours(0, 0, 0, 0);
+
+const endOfDay = new Date();
+endOfDay.setHours(23, 59, 59, 999);
+
+// Đếm số lượng công việc chưa hoàn thành và đến hạn trong hôm nay
+const pendingTasksCount = tasks?.filter(task => {
+  const dueDate = new Date(task.date);
+  return !task.isCompleted &&
+    dueDate >= startOfDay &&
+    dueDate <= endOfDay;
+}).length ?? 0;
+
 
   const defaultAvatar = "https://picsum.photos/200";
   if (isLoading || !tasks) {
@@ -186,16 +227,30 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
           >
             <Text style={{ color: "white", textAlign: "center" }}>Ngày mai</Text>
           </Pressable>
+          <Pressable
+            style={{
+              backgroundColor: currentFilter === 'Quá hạn' ? "#d946e9" : "#e884f5",
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => handleFilterPress('Quá hạn')}
+          >
+            <Text style={{ color: "white", textAlign: "center" }}>Quá hạn</Text>
+          </Pressable>
         </View>
         <Box height={5} />
         {tasks.length > 0 ? (
-          <FlatList
-            data={sortedTasks}
-            renderItem={({ item }) => <Task task={item} mutateTasks={mutateTasks} />}
-            ItemSeparatorComponent={() => <Box height={0} />}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item._id}
-          />
+         <FlatList
+         data={sortedTasks}
+         renderItem={({ item }) => <Task task={item} mutateTasks={mutateTasks} />}
+         ItemSeparatorComponent={() => <Box height={0} />}
+         showsVerticalScrollIndicator={false}
+         keyExtractor={(item) => item._id}
+       />
+       
         ) : (
           <View style={styles.emptyTaskContainer}>
             <Image

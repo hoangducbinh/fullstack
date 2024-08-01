@@ -1,49 +1,63 @@
-import { AppState, StatusBar, StyleSheet, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import Button from './src/components/shared/button'
-import { ThemeProvider } from '@shopify/restyle'
-import theme, { Text } from './src/utils/theme'
-import Navigation from './src/navigation'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { SWRConfig } from 'swr'
+import { AppState, StatusBar, StyleSheet, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { ThemeProvider } from '@shopify/restyle';
+import theme from './src/utils/theme';
+import Navigation from './src/navigation';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SWRConfig } from 'swr';
 import messaging from '@react-native-firebase/messaging';
-import {PermissionsAndroid} from 'react-native';
+import { PermissionsAndroid } from 'react-native';
+import { NavigationContainerRef, createNavigationContainerRef } from '@react-navigation/native';
+import { RootBottomTabParamList } from './src/navigation/types';
 
+// Tạo một tham chiếu điều hướng
+const navigationRef = createNavigationContainerRef<RootBottomTabParamList>();
 
+// Xử lý thông báo khi ứng dụng mở từ trạng thái nền
 messaging().onNotificationOpenedApp(remoteMessage => {
   console.log(
-    'Notification caused app to open from background state:',
+    'Thông báo đã khiến ứng dụng mở từ trạng thái nền:',
     remoteMessage.notification,
   );
+  
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('Settings');
+  }
 });
 
-messaging().onMessage(remoteMessage => {
-  console.log('A new FCM message arrived!', remoteMessage);
+// Xử lý thông báo khi ứng dụng đang hoạt động
+messaging().onMessage(async remoteMessage => {
+  console.log('Một thông báo FCM mới đã đến!', remoteMessage);
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('Settings');
+  }
 });
 
+// Xử lý thông báo khi ứng dụng ở chế độ nền hoặc bị đóng
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('Message handled in the background!', remoteMessage);
-  // Xử lý thông báo ở đây
+  console.log('Thông báo được xử lý ở chế độ nền!', remoteMessage);
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('Settings');
+  }
 });
-
 
 const App = () => {
-  useEffect(()=>{
+  useEffect(() => {
     const requestUserPermission = async () => {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-     const authStatus = await messaging().requestPermission();
-     const enabled =
-       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-     if (enabled) {
-      // console.log('Authorization status:', authStatus);
-       const token = await messaging().getToken();
-      // console.log('FCM token:',token);
-     }
-   };
-   requestUserPermission();
-   },[])
+      if (enabled) {
+        console.log('Trạng thái cấp quyền:', authStatus);
+        const token = await messaging().getToken();
+        console.log('FCM token:', token);
+      }
+    };
+    requestUserPermission();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -51,28 +65,28 @@ const App = () => {
         <SWRConfig
           value={{
             provider: () => new Map(),
-            isVisible: () => { return true },
+            isVisible: () => true,
             initFocus(callback) {
-              let appState = AppState.currentState
+              let appState = AppState.currentState;
 
-              const onAppStateChange = (nextAppState:any) => {
-                /* If it's resuming from background or inactive mode to active one */
+              const onAppStateChange = (nextAppState: any) => {
+                /* Nếu nó chuyển từ nền hoặc chế độ không hoạt động sang chế độ hoạt động */
                 if (appState.match(/inactive|background/) && nextAppState === 'active') {
-                  callback()
+                  callback();
                 }
-                appState = nextAppState
-              }
+                appState = nextAppState;
+              };
 
-              // Subscribe to the app state change events
-              const subscription = AppState.addEventListener('change', onAppStateChange)
+              // Đăng ký sự kiện thay đổi trạng thái ứng dụng
+              const subscription = AppState.addEventListener('change', onAppStateChange);
 
               return () => {
-                subscription.remove()
-              }
-            }
+                subscription.remove();
+              };
+            },
           }}
         >
-          <Navigation />
+          <Navigation ref={navigationRef} />
         </SWRConfig>
         <StatusBar
           translucent
@@ -81,11 +95,10 @@ const App = () => {
         />
       </SafeAreaProvider>
     </ThemeProvider>
+  );
+};
 
-  )
-}
-
-export default App
+export default App;
 
 const styles = StyleSheet.create({
   container: {
@@ -93,5 +106,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  }
-})
+  },
+});

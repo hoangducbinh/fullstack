@@ -1,6 +1,6 @@
 import { format, isToday } from "date-fns";
 import React, { useState } from "react";
-import { Modal, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Alert, Modal, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
@@ -66,26 +66,36 @@ const TaskActions = ({ categoryId, isModalVisible, setModalVisible }: TaskAction
 
   const onCreateTask = async () => {
     try {
-      if (newTask.name.trim().length > 0) {
-        await trigger({
-          ...newTask,
-        });
-        setNewTask({
-          categoryId: newTask.categoryId,
-          isCompleted: false,
-          date: todaysISODate.toISOString(),
-          name: "",
-          description: "",
-        });
-        await mutate("tasks/");
-        setModalVisible(false);
-        console.log('Task created');
-      }
+        if (!newTask.categoryId) {
+            Alert.alert('Lỗi', 'Vui lòng chọn danh mục trước khi thêm công việc.');
+            return;
+        }
+
+        if (newTask.name.trim().length > 0) {
+            await trigger({
+                ...newTask,
+            });
+            setNewTask({
+                categoryId: newTask.categoryId,
+                isCompleted: false,
+                date: todaysISODate.toISOString(),
+                name: "",
+                description: "",
+            });
+            await mutate("tasks/");
+            setModalVisible(false);
+            
+            // Hiển thị thông báo thành công
+            Alert.alert('Thành công', 'Công việc đã được thêm thành công.');
+            console.log('Task created');
+        } else {
+            Alert.alert('Lỗi', 'Tên công việc không được bỏ trống.');
+        }
     } catch (error) {
-      console.log("error in onCreateTask", error);
-      throw error;
+        console.log("error in onCreateTask", error);
+        Alert.alert('Lỗi', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
     }
-  };
+};
 
   return (
     <>

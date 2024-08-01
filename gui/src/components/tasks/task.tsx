@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { Alert, View, Text, Pressable, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import useSWRMutation from "swr/mutation";
 import { ICategory, ITask } from "../../types";
@@ -34,20 +33,49 @@ const toggleTaskStatusRequest = async (
 
 const Task = ({ task, mutateTasks }: TaskProps) => {
   const { trigger } = useSWRMutation("tasks/update", toggleTaskStatusRequest);
-  const [updatedTask, setUpdatedTask] = useState(task);
   const navigation = useNavigation<HomeScreenNavigationType>();
 
-  const toggleTaskStatus = async () => {
-    try {
-      const _updatedTask = {
-        id: task._id,
-        isCompleted: !task.isCompleted,
-      };
-      await trigger(_updatedTask);
-      await mutateTasks();
-    } catch (error) {
-      console.log("error in toggleTaskStatus", error);
-      throw error;
+  const toggleTaskStatus = () => {
+    if (task.isCompleted) {
+      // Không cho thay đổi trạng thái nếu công việc đã hoàn thành
+      Alert.alert(
+        'Thông báo',
+        'Công việc này đã hoàn thành và không thể thay đổi trạng thái.',
+        [{ text: 'OK' }]
+      );
+    } else {
+      // Hiển thị xác nhận nếu công việc chưa hoàn thành
+      Alert.alert(
+        'Xác nhận thay đổi trạng thái',
+        'Bạn có chắc chắn công việc này đã hoàn thành không?',
+        [
+          {
+            text: 'Có',
+            onPress: async () => {
+              try {
+                const _updatedTask = {
+                  id: task._id,
+                  isCompleted: !task.isCompleted,
+                };
+                await trigger(_updatedTask);
+                await mutateTasks();
+                Alert.alert(
+                  'Cập nhật công việc',
+                  `Công việc "${task.name}" đã ${_updatedTask.isCompleted ? 'hoàn thành' : 'chưa hoàn thành'}.`,
+                  [{ text: 'OK' }]
+                );
+              } catch (error) {
+                console.log("error in toggleTaskStatus", error);
+                Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật trạng thái công việc.');
+              }
+            },
+          },
+          {
+            text: 'Không',
+            style: 'cancel',
+          },
+        ]
+      );
     }
   };
 
@@ -58,13 +86,14 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
+
   const { data: categories, isLoading } = useSWR<ICategory[]>(
     "categories",
     fetcher
   );
-  
+
   const selectedCategory = categories?.find(
-    (_category) => _category._id === updatedTask.categoryId
+    (_category) => _category._id === task.categoryId
   );
 
   return (
@@ -90,13 +119,13 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
           >
             {task.isCompleted && <Icon name="check" size={20} color="#ffffff" />}
           </Pressable>
-          <View style={styles.taskTextContainer}>
+
+          <Pressable onPress={navigateToEditTask} style={styles.taskTextContainer}>
             <Text
               style={[
                 styles.taskText,
                 {
                   color: task.isCompleted ? "#6d0073" : "#000000",
-                  // textDecorationLine: task.isCompleted ? "line-through" : "none",
                   textDecorationLine: task.isCompleted ? "none" : "none",
                 },
               ]}
@@ -108,10 +137,10 @@ const Task = ({ task, mutateTasks }: TaskProps) => {
                 {truncateText(selectedCategory.name, 20)}
               </Text>
             )}
-          </View>
+          </Pressable>
         </View>
         <View style={styles.dateContainer}>
-          <Box
+          <Box 
             bg="neutral100"
             p="2"
             borderRadius="rounded-xl"

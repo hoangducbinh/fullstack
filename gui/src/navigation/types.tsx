@@ -27,7 +27,7 @@ export type RootBottomTabParamList = {
 }
 
 export type HomeStackParamList = {
-  Home: undefined
+  Home: undefined | { filter: string }
   EditTask: {
     task: ITask
   }

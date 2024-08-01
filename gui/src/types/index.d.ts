@@ -30,6 +30,8 @@ interface ICategory {
   isEditable: boolean
   color: IColor
   icon: IIcon
+  createdAt: string
+  updatedAt: string
 }
 
 interface ICategoryRequest {
@@ -46,6 +48,8 @@ interface ITask {
   createdAt: string
   date: string
   description: string
+  dueDate: string; // Ngày đến hạn
+  isOverdue?: boolean; // Trạng thái quá hạn
 }
 
 interface ITaskRequest {
